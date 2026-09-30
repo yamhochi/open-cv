@@ -87,9 +87,10 @@ rm -rf package open-slide-core-X.Y.Z.tgz
 
 # 2. Merge it into your branch, then re-apply the changes to the built files
 git switch master
-git merge upstream-X.Y.Z          # resolve conflicts in framework/core/src and skills/
-git checkout upstream-X.Y.Z -- framework/core/dist
+git merge upstream-X.Y.Z          # will conflict in dist/ (hashed names); resolve src/ and skills/ by hand
+git rm -rq framework/core/dist && git checkout upstream-X.Y.Z -- framework/core/dist
 node scripts/patch-framework-dist.mjs
+git add -A && git commit           # finish the merge
 
 # 3. Reinstall and check
 pnpm install && pnpm sync:skills && pnpm dev
