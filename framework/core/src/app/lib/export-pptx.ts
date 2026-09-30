@@ -76,7 +76,6 @@ export async function exportSlideAsPptx(
       slides.push(
         await lib.measurePage({
           frame,
-          notes: slide.notes?.[i]?.trim() || null,
           images,
           rasterizer: new lib.Rasterizer(frame),
           color,
@@ -131,7 +130,6 @@ export async function exportSlideAsImagePptx(
       const imageId = images.add(new Uint8Array(await blob.arrayBuffer()), 'png');
       slides.push({
         background: null,
-        notes: slide.notes?.[i]?.trim() || null,
         nodes: [
           {
             kind: 'picture' as const,

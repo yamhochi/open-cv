@@ -24,7 +24,6 @@ import { hasModifier, isBackwardKey, isForwardKey, isTypingTarget } from '@/lib/
 import { useDocumentTitle } from '@/lib/use-document-title';
 import { format, useLocale } from '@/lib/use-locale';
 import { cn, pad2 } from '@/lib/utils';
-import { NoteMarkdown } from '../components/note-markdown';
 import {
   type PresenterState,
   usePresenterChannel,
@@ -159,7 +158,6 @@ export function Presenter() {
   const pages = slide.default;
   const total = pages.length;
   const index = Math.max(0, Math.min(total - 1, state?.index ?? 0));
-  const note = slide.notes?.[index];
   const blackout = state?.blackout ?? null;
   const startedAt = state?.startedAt ?? localStart;
   const stepIndex = Math.max(0, state?.stepIndex ?? 0);
@@ -238,7 +236,7 @@ export function Presenter() {
           </div>
         </section>
 
-        {/* Next + notes */}
+        {/* Next */}
         <aside className="flex min-h-0 flex-col gap-4">
           <div className="flex flex-col gap-2">
             <SectionLabel>{hasNext ? t.presenter.upNext : t.presenter.lastSlide}</SectionLabel>
@@ -261,8 +259,6 @@ export function Presenter() {
               )}
             </div>
           </div>
-
-          <SpeakerNotes note={note} />
 
           <PresenterJumpControl total={total} current={index} onJump={goTo} />
         </aside>
@@ -543,71 +539,6 @@ function PresenterBottomBar({
         </Button>
       </div>
     </footer>
-  );
-}
-
-const NOTES_FONT_SIZES = [11, 12, 13.5, 15, 17, 20, 24, 28];
-const NOTES_FONT_SIZE_DEFAULT_INDEX = 2;
-const NOTES_FONT_SIZE_STORAGE_KEY = 'open-slide:presenter-notes-font-size';
-
-function SpeakerNotes({ note }: { note: string | undefined }) {
-  const t = useLocale();
-  const [sizeIndex, setSizeIndex] = useState(() => {
-    if (typeof window === 'undefined') return NOTES_FONT_SIZE_DEFAULT_INDEX;
-    const stored = Number(window.localStorage.getItem(NOTES_FONT_SIZE_STORAGE_KEY));
-    return NOTES_FONT_SIZES.includes(stored)
-      ? NOTES_FONT_SIZES.indexOf(stored)
-      : NOTES_FONT_SIZE_DEFAULT_INDEX;
-  });
-
-  useEffect(() => {
-    window.localStorage.setItem(NOTES_FONT_SIZE_STORAGE_KEY, String(NOTES_FONT_SIZES[sizeIndex]));
-  }, [sizeIndex]);
-
-  return (
-    <div className="flex min-h-0 flex-1 flex-col gap-2">
-      <div className="flex items-center justify-between">
-        <SectionLabel>{t.presenter.speakerNotes}</SectionLabel>
-        <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            onClick={() => setSizeIndex((i) => Math.max(0, i - 1))}
-            disabled={sizeIndex === 0}
-            title={t.presenter.notesTextSmaller}
-            aria-label={t.presenter.notesTextSmaller}
-          >
-            <AArrowDown className="size-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            onClick={() => setSizeIndex((i) => Math.min(NOTES_FONT_SIZES.length - 1, i + 1))}
-            disabled={sizeIndex === NOTES_FONT_SIZES.length - 1}
-            title={t.presenter.notesTextLarger}
-            aria-label={t.presenter.notesTextLarger}
-          >
-            <AArrowUp className="size-4" />
-          </Button>
-        </div>
-      </div>
-      <div
-        className="min-h-0 flex-1 overflow-y-auto rounded-[6px] border border-border bg-card p-3 leading-relaxed text-card-foreground"
-        style={{ fontSize: NOTES_FONT_SIZES[sizeIndex] }}
-      >
-        {note?.trim() ? (
-          <NoteMarkdown text={note} />
-        ) : (
-          <span className="text-muted-foreground">
-            {t.presenter.noNotesPrefix}
-            <code className="rounded-[3px] bg-muted px-1 py-0.5 font-mono text-[0.9em]">
-              export const notes = […]
-            </code>
-            {t.presenter.noNotesSuffix}
-          </span>
-        )}
-      </div>
-    </div>
   );
 }
 

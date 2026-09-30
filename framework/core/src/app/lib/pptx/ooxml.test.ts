@@ -31,7 +31,6 @@ const deck: DeckScene = {
   slides: [
     {
       background: { kind: 'solid', color: { r: 247, g: 245, b: 240, a: 1 } },
-      notes: 'Open with the quote.\n\nPause.',
       nodes: [
         {
           kind: 'shape',
@@ -95,7 +94,7 @@ const deck: DeckScene = {
         },
       ],
     },
-    { background: null, notes: null, nodes: [] },
+    { background: null, nodes: [] },
   ],
 };
 
@@ -110,10 +109,6 @@ describe('buildPptxFiles', () => {
         '_rels/.rels',
         'ppt/_rels/presentation.xml.rels',
         'ppt/media/image1.png',
-        'ppt/notesMasters/_rels/notesMaster1.xml.rels',
-        'ppt/notesMasters/notesMaster1.xml',
-        'ppt/notesSlides/_rels/notesSlide1.xml.rels',
-        'ppt/notesSlides/notesSlide1.xml',
         'ppt/presProps.xml',
         'ppt/presentation.xml',
         'ppt/slideLayouts/_rels/slideLayout1.xml.rels',
@@ -125,15 +120,10 @@ describe('buildPptxFiles', () => {
         'ppt/slides/slide1.xml',
         'ppt/slides/slide2.xml',
         'ppt/theme/theme1.xml',
-        'ppt/theme/theme2.xml',
       ].sort(),
     );
-    expect(text('ppt/presentation.xml')).toContain('<p:sldSz cx="12192000" cy="6858000"/>');
-    expect(text('ppt/presentation.xml')).toContain('<p:notesMasterId r:id="rId5"/>');
+    expect(text('ppt/presentation.xml')).toContain('<p:sldSz cx="7562850" cy="10696575"/>');
     expect(text('ppt/slides/_rels/slide1.xml.rels')).toContain('Target="../media/image1.png"');
-    expect(text('ppt/slides/_rels/slide1.xml.rels')).toContain('notesSlides/notesSlide1.xml');
-    expect(text('ppt/slides/_rels/slide2.xml.rels')).not.toContain('notesSlide');
-    expect(text('[Content_Types].xml')).toContain('/ppt/notesSlides/notesSlide1.xml');
   });
 
   it('converts geometry, text and fills into DrawingML', () => {
@@ -160,7 +150,6 @@ describe('buildPptxFiles', () => {
     expect(slide).toContain('<a:alphaModFix amt="80000"/>');
     expect(slide).toContain('<a:srcRect l="10000" t="0" r="10000" b="0"/>');
     expect(slide).toContain('<a:prstGeom prst="ellipse">');
-    expect(text('ppt/notesSlides/notesSlide1.xml')).toContain('<a:t>Open with the quote.</a:t>');
   });
 
   it('builds a custom rounded path for uneven corners', () => {

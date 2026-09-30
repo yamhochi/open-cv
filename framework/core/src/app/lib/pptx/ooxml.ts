@@ -58,24 +58,18 @@ export function escapeXml(value: string): string {
 export function buildPptxFiles(deck: DeckScene): Record<string, Uint8Array> {
   const files: Record<string, Uint8Array> = {};
   const n = deck.slides.length;
-  const hasNotes = deck.slides.some((s) => s.notes);
   const imageById = new Map(deck.images.map((img) => [img.id, img]));
 
-  files['[Content_Types].xml'] = strToU8(contentTypesXml(deck, hasNotes));
+  files['[Content_Types].xml'] = strToU8(contentTypesXml(deck));
   files['_rels/.rels'] = strToU8(rootRelsXml());
-  files['ppt/presentation.xml'] = strToU8(presentationXml(n, hasNotes));
-  files['ppt/_rels/presentation.xml.rels'] = strToU8(presentationRelsXml(n, hasNotes));
+  files['ppt/presentation.xml'] = strToU8(presentationXml(n));
+  files['ppt/_rels/presentation.xml.rels'] = strToU8(presentationRelsXml(n));
   files['ppt/presProps.xml'] = strToU8(presPropsXml());
   files['ppt/theme/theme1.xml'] = strToU8(themeXml());
   files['ppt/slideMasters/slideMaster1.xml'] = strToU8(slideMasterXml());
   files['ppt/slideMasters/_rels/slideMaster1.xml.rels'] = strToU8(slideMasterRelsXml());
   files['ppt/slideLayouts/slideLayout1.xml'] = strToU8(slideLayoutXml());
   files['ppt/slideLayouts/_rels/slideLayout1.xml.rels'] = strToU8(slideLayoutRelsXml());
-  if (hasNotes) {
-    files['ppt/notesMasters/notesMaster1.xml'] = strToU8(notesMasterXml());
-    files['ppt/notesMasters/_rels/notesMaster1.xml.rels'] = strToU8(notesMasterRelsXml());
-    files['ppt/theme/theme2.xml'] = strToU8(themeXml());
-  }
 
   for (const image of deck.images) {
     files[`ppt/media/${imageFileName(image)}`] = image.bytes;
@@ -87,13 +81,7 @@ export function buildPptxFiles(deck: DeckScene): Record<string, Uint8Array> {
     const rels = new SlideRels();
     const xml = slideXml(slide, rels, imageById);
     files[`ppt/slides/slide${idx}.xml`] = strToU8(xml);
-    files[`ppt/slides/_rels/slide${idx}.xml.rels`] = strToU8(
-      slideRelsXml(rels, slide.notes ? idx : null),
-    );
-    if (slide.notes) {
-      files[`ppt/notesSlides/notesSlide${idx}.xml`] = strToU8(notesSlideXml(slide.notes));
-      files[`ppt/notesSlides/_rels/notesSlide${idx}.xml.rels`] = strToU8(notesSlideRelsXml(idx));
-    }
+    files[`ppt/slides/_rels/slide${idx}.xml.rels`] = strToU8(slideRelsXml(rels));
   });
 
   return files;
@@ -117,17 +105,9 @@ class SlideRels {
     this.byTarget.set(target, id);
     return id;
   }
-
-  notes(idx: number): void {
-    this.entries.push({
-      id: `rId${this.entries.length + 1}`,
-      type: `${OD_REL}/notesSlide`,
-      target: `../notesSlides/notesSlide${idx}.xml`,
-    });
-  }
 }
 
-function contentTypesXml(deck: DeckScene, hasNotes: boolean): string {
+function contentTypesXml(deck: DeckScene): string {
   const defaults = [
     `<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>`,
     `<Default Extension="xml" ContentType="application/xml"/>`,
@@ -142,19 +122,8 @@ function contentTypesXml(deck: DeckScene, hasNotes: boolean): string {
     override('/ppt/slideLayouts/slideLayout1.xml', `${CT_PREFIX}.slideLayout+xml`),
     override('/ppt/theme/theme1.xml', 'application/vnd.openxmlformats-officedocument.theme+xml'),
   ];
-  if (hasNotes) {
-    overrides.push(
-      override('/ppt/notesMasters/notesMaster1.xml', `${CT_PREFIX}.notesMaster+xml`),
-      override('/ppt/theme/theme2.xml', 'application/vnd.openxmlformats-officedocument.theme+xml'),
-    );
-  }
-  deck.slides.forEach((slide, i) => {
+  deck.slides.forEach((_, i) => {
     overrides.push(override(`/ppt/slides/slide${i + 1}.xml`, `${CT_PREFIX}.slide+xml`));
-    if (slide.notes) {
-      overrides.push(
-        override(`/ppt/notesSlides/notesSlide${i + 1}.xml`, `${CT_PREFIX}.notesSlide+xml`),
-      );
-    }
   });
   return `${XML_DECL}<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">${defaults.join('')}${overrides.join('')}</Types>`;
 }
@@ -167,18 +136,15 @@ function rootRelsXml(): string {
   return `${XML_DECL}<Relationships xmlns="${REL_NS}"><Relationship Id="rId1" Type="${OD_REL}/officeDocument" Target="ppt/presentation.xml"/></Relationships>`;
 }
 
-function presentationXml(n: number, hasNotes: boolean): string {
+function presentationXml(n: number): string {
   const sldIds = Array.from(
     { length: n },
     (_, i) => `<p:sldId id="${256 + i}" r:id="rId${i + 3}"/>`,
   ).join('');
-  const notesMaster = hasNotes
-    ? `<p:notesMasterIdLst><p:notesMasterId r:id="rId${n + 3}"/></p:notesMasterIdLst>`
-    : '';
-  return `${XML_DECL}<p:presentation xmlns:a="${NS_A}" xmlns:r="${OD_REL}" xmlns:p="${NS_P}" saveSubsetFonts="1"><p:sldMasterIdLst><p:sldMasterId id="2147483648" r:id="rId1"/></p:sldMasterIdLst>${notesMaster}<p:sldIdLst>${sldIds}</p:sldIdLst><p:sldSz cx="${SLIDE_EMU_W}" cy="${SLIDE_EMU_H}"/><p:notesSz cx="6858000" cy="9144000"/></p:presentation>`;
+  return `${XML_DECL}<p:presentation xmlns:a="${NS_A}" xmlns:r="${OD_REL}" xmlns:p="${NS_P}" saveSubsetFonts="1"><p:sldMasterIdLst><p:sldMasterId id="2147483648" r:id="rId1"/></p:sldMasterIdLst><p:sldIdLst>${sldIds}</p:sldIdLst><p:sldSz cx="${SLIDE_EMU_W}" cy="${SLIDE_EMU_H}"/><p:notesSz cx="6858000" cy="9144000"/></p:presentation>`;
 }
 
-function presentationRelsXml(n: number, hasNotes: boolean): string {
+function presentationRelsXml(n: number): string {
   const rels = [
     `<Relationship Id="rId1" Type="${OD_REL}/slideMaster" Target="slideMasters/slideMaster1.xml"/>`,
     `<Relationship Id="rId2" Type="${OD_REL}/presProps" Target="presProps.xml"/>`,
@@ -186,11 +152,6 @@ function presentationRelsXml(n: number, hasNotes: boolean): string {
   for (let i = 0; i < n; i++) {
     rels.push(
       `<Relationship Id="rId${i + 3}" Type="${OD_REL}/slide" Target="slides/slide${i + 1}.xml"/>`,
-    );
-  }
-  if (hasNotes) {
-    rels.push(
-      `<Relationship Id="rId${n + 3}" Type="${OD_REL}/notesMaster" Target="notesMasters/notesMaster1.xml"/>`,
     );
   }
   return `${XML_DECL}<Relationships xmlns="${REL_NS}">${rels.join('')}</Relationships>`;
@@ -219,32 +180,7 @@ function slideLayoutRelsXml(): string {
   return `${XML_DECL}<Relationships xmlns="${REL_NS}"><Relationship Id="rId1" Type="${OD_REL}/slideMaster" Target="../slideMasters/slideMaster1.xml"/></Relationships>`;
 }
 
-function notesMasterXml(): string {
-  return `${XML_DECL}<p:notesMaster xmlns:a="${NS_A}" xmlns:r="${OD_REL}" xmlns:p="${NS_P}"><p:cSld><p:bg><p:bgRef idx="1001"><a:schemeClr val="bg1"/></p:bgRef></p:bg><p:spTree>${EMPTY_GROUP}<p:sp><p:nvSpPr><p:cNvPr id="2" name="Slide Image Placeholder 1"/><p:cNvSpPr><a:spLocks noGrp="1" noRot="1" noChangeAspect="1"/></p:cNvSpPr><p:nvPr><p:ph type="sldImg" idx="2"/></p:nvPr></p:nvSpPr><p:spPr><a:xfrm><a:off x="1371600" y="685800"/><a:ext cx="4114800" cy="2314575"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/><a:ln w="12700"><a:solidFill><a:prstClr val="black"/></a:solidFill></a:ln></p:spPr></p:sp><p:sp><p:nvSpPr><p:cNvPr id="3" name="Notes Placeholder 2"/><p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr><p:nvPr><p:ph type="body" sz="quarter" idx="3"/></p:nvPr></p:nvSpPr><p:spPr><a:xfrm><a:off x="685800" y="4343400"/><a:ext cx="5486400" cy="4114800"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr><p:txBody><a:bodyPr vert="horz" lIns="91440" tIns="45720" rIns="91440" bIns="45720" rtlCol="0"/><a:lstStyle/><a:p><a:endParaRPr lang="en-US"/></a:p></p:txBody></p:sp></p:spTree></p:cSld><p:clrMap ${CLR_MAP}/><p:notesStyle><a:lvl1pPr marL="0" algn="l" defTabSz="914400" rtl="0" eaLnBrk="1" latinLnBrk="0" hangingPunct="1"><a:defRPr sz="1200" kern="1200"><a:solidFill><a:schemeClr val="tx1"/></a:solidFill><a:latin typeface="+mn-lt"/><a:ea typeface="+mn-ea"/><a:cs typeface="+mn-cs"/></a:defRPr></a:lvl1pPr></p:notesStyle></p:notesMaster>`;
-}
-
-function notesMasterRelsXml(): string {
-  return `${XML_DECL}<Relationships xmlns="${REL_NS}"><Relationship Id="rId1" Type="${OD_REL}/theme" Target="../theme/theme2.xml"/></Relationships>`;
-}
-
-function notesSlideXml(notes: string): string {
-  const paragraphs = notes
-    .split(/\r?\n/)
-    .map((line) =>
-      line.length === 0
-        ? `<a:p><a:endParaRPr lang="en-US"/></a:p>`
-        : `<a:p><a:r><a:rPr lang="en-US" dirty="0"/><a:t>${escapeXml(line)}</a:t></a:r></a:p>`,
-    )
-    .join('');
-  return `${XML_DECL}<p:notes xmlns:a="${NS_A}" xmlns:r="${OD_REL}" xmlns:p="${NS_P}"><p:cSld><p:spTree>${EMPTY_GROUP}<p:sp><p:nvSpPr><p:cNvPr id="2" name="Slide Image Placeholder 1"/><p:cNvSpPr><a:spLocks noGrp="1" noRot="1" noChangeAspect="1"/></p:cNvSpPr><p:nvPr><p:ph type="sldImg"/></p:nvPr></p:nvSpPr><p:spPr/></p:sp><p:sp><p:nvSpPr><p:cNvPr id="3" name="Notes Placeholder 2"/><p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr><p:nvPr><p:ph type="body" idx="1"/></p:nvPr></p:nvSpPr><p:spPr/><p:txBody><a:bodyPr/><a:lstStyle/>${paragraphs}</p:txBody></p:sp></p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:notes>`;
-}
-
-function notesSlideRelsXml(idx: number): string {
-  return `${XML_DECL}<Relationships xmlns="${REL_NS}"><Relationship Id="rId1" Type="${OD_REL}/notesMaster" Target="../notesMasters/notesMaster1.xml"/><Relationship Id="rId2" Type="${OD_REL}/slide" Target="../slides/slide${idx}.xml"/></Relationships>`;
-}
-
-function slideRelsXml(rels: SlideRels, notesIdx: number | null): string {
-  if (notesIdx !== null) rels.notes(notesIdx);
+function slideRelsXml(rels: SlideRels): string {
   const body = rels.entries
     .map((r) => `<Relationship Id="${r.id}" Type="${r.type}" Target="${r.target}"/>`)
     .join('');

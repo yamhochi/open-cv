@@ -15,8 +15,6 @@ export type SlideModule = {
   default: Page[];
   meta?: SlideMeta;
   design?: DesignSystem;
-  // Index-aligned with `default`.
-  notes?: (string | undefined)[];
   transition?: SlideTransition;
 };
 
@@ -33,5 +31,5 @@ export type FoldersManifest = {
   assignments: Record<string, string>;
 };
 
-export const CANVAS_WIDTH = 1920;
-export const CANVAS_HEIGHT = 1080;
+export const CANVAS_WIDTH = 794;
+export const CANVAS_HEIGHT = 1123;

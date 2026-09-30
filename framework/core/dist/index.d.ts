@@ -85,11 +85,10 @@ type SlideModule = {
   default: Page[];
   meta?: SlideMeta;
   design?: DesignSystem;
-  notes?: (string | undefined)[];
   transition?: SlideTransition;
 };
-declare const CANVAS_WIDTH = 1920;
-declare const CANVAS_HEIGHT = 1080;
+declare const CANVAS_WIDTH = 794;
+declare const CANVAS_HEIGHT = 1123;
 //#endregion
 //#region src/app/lib/step-context.d.ts
 declare function useIsActivePage(): boolean;

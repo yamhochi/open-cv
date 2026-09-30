@@ -53,9 +53,9 @@ const PRINT_STYLES = `
   }
   /* Supersample: Chrome rasterizes filtered/composited layers (e.g. filter:
      blur, mix-blend-mode) at the layer's CSS-pixel size, so a blurred
-     gradient on a 1920×1080 page bakes in at ~1× DPI and bands when the PDF
+     gradient on a 794×1123 page bakes in at ~1× DPI and bands when the PDF
      is viewed scaled up. zoom:2 doubles the layer raster size; scale(0.5)
-     composites it back to 1920×1080. Vector content (text, plain CSS
+     composites it back to 794×1123. Vector content (text, plain CSS
      gradients, SVG) stays vector through both transforms. */
   #${PRINT_ROOT_ID} .os-print-supersample {
     width: ${CANVAS_WIDTH}px !important;

@@ -180,7 +180,7 @@ const Header = ({ role }: { role?: string }) => {
 // Fixed spacing per that skill: 4px within an entry's own elements, line-height 1.5 for
 // bullets. Between-role gap (20px) and between-section gap (40px) are set by the caller.
 // Pagination rule: this whole component is atomic — never split across a page break.
-// Bullets/sub-bullets are literal <Bullet>/<SubBullet> children, not a data array + map —
+// Bullets/sub-bullets are literal <Bullet>/<SubBullet text="…" /> children, not a data array + map —
 // each line needs its own JSX node so the inspector can resolve and edit it individually
 // instead of falling back to the nearest shared ancestor.
 const Entry = ({
@@ -236,7 +236,7 @@ const Bullet = ({
       color: muted,
     }}
   >
-    <span style={{ display: 'flex', gap: 6 }}>
+    <div style={{ display: 'flex', gap: 6 }}>
       <span
         style={{
           flexShrink: 0,
@@ -247,25 +247,25 @@ const Bullet = ({
           background: muted,
         }}
       />
-      <span style={emphasis ? { fontWeight: 500 } : undefined}>
-        <span style={{ display: 'inline-block', color: muted, fontWeight: 500 }}>{label}</span>
+      <div style={emphasis ? { fontWeight: 500 } : undefined}>
+        <div style={{ display: 'inline-block', color: muted, fontWeight: 500 }}>{label}</div>
         {body ? <>: {body}</> : null}
-      </span>
-    </span>
+      </div>
+    </div>
     {children}
   </li>
 );
 
-// The label span above is `display: inline-block` with `{label}` as its sole
-// child — not just style — so the inspector's click-selection stops there
-// (rather than climbing past it as ordinary inline text) and its source
-// resolves directly to this call site's `label` prop instead of failing to
-// find anything editable.
-const SubBullet = ({ children }: { children: ReactNode }) => (
-  <span style={{ display: 'flex', gap: 4, paddingLeft: 9 }}>
+// The label and sub-bullet text are `<div style={{ display: 'inline-block' }}>` with the prop as
+// their sole child. The inspector climbs past <span>/<b>/<i> (inline text) to the nearest
+// non-inline ancestor, so a <span> here would let the click resolve to the whole <li> and
+// edit parent + sub-bullets as one paragraph. A <div> stops the climb at exactly this line, and
+// its source resolves to this call site's `label` / `text` prop.
+const SubBullet = ({ text }: { text: string }) => (
+  <div style={{ display: 'flex', gap: 4, paddingLeft: 9 }}>
     <span aria-hidden="true">-</span>
-    <span style={{ display: 'inline-block' }}>{children}</span>
-  </span>
+    <div style={{ display: 'inline-block' }}>{text}</div>
+  </div>
 );
 
 const CompactEntry = ({ title, body }: { title: string; body: string }) => (
@@ -326,25 +326,23 @@ const ResumePageOne: Page = () => (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             <Entry date="Jan 2023 – Present" company="Company Name" roleTitle="Your Role Title">
               <Bullet label="Lead with the outcome — what changed, by how much, for whom">
-                <SubBullet>
-                  Back it with the mechanism: what you actually did to get there.
-                </SubBullet>
-                <SubBullet>A second supporting detail, if it earns its place.</SubBullet>
+                <SubBullet text="First supportintg detail, outcomes first" />
+                <SubBullet text="A second supporting detail, if it earns its place." />
               </Bullet>
               <Bullet label="A second result-led bullet, specific and measurable">
-                <SubBullet>How you got there, in one clear line.</SubBullet>
+                <SubBullet text="How you got there, in one clear line." />
               </Bullet>
               <Bullet
                 label="A third bullet worth calling out with emphasis"
                 emphasis
               >
-                <SubBullet>Supporting detail one.</SubBullet>
-                <SubBullet>Supporting detail two.</SubBullet>
+                <SubBullet text="Supporting detail one." />
+                <SubBullet text="Supporting detail two." />
               </Bullet>
             </Entry>
             <Entry date="Jun 2020 – Dec 2022" company="Previous Company" roleTitle="Prior Role Title">
               <Bullet label="A headline result from this role">
-                <SubBullet>The specific action that drove it.</SubBullet>
+                <SubBullet text="The specific action that drove it." />
               </Bullet>
               <Bullet label="Another result worth including" />
             </Entry>

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { format, useLocale } from '@/lib/use-locale';
 import { cn, pad2 } from '@/lib/utils';
 import { SlidePageProvider } from '../../lib/page-context';
-import type { SlideModule } from '../../lib/sdk';
+import { CANVAS_HEIGHT, CANVAS_WIDTH, type SlideModule } from '../../lib/sdk';
 import { loadSlide, slidesByTheme } from '../../lib/slides';
 import { loadThemeDemo, type ThemeDemoModule, themes } from '../../lib/themes';
 import { SlideCanvas } from '../slide-canvas';
@@ -98,7 +98,7 @@ export function ThemeDetail({ themeId, onBack }: { themeId: string; onBack: () =
       <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:gap-8">
         <div className="flex min-w-0 flex-col gap-6">
           <div className="flex flex-col gap-3">
-            <div className="relative aspect-video overflow-hidden rounded-[8px] border border-hairline bg-card shadow-edge ring-1 ring-foreground/[0.04]">
+            <div style={{ aspectRatio: `${CANVAS_WIDTH} / ${CANVAS_HEIGHT}` }} className="relative overflow-hidden rounded-[8px] border border-hairline bg-card shadow-edge ring-1 ring-foreground/[0.04]">
               {!theme.hasDemo ? (
                 <NoDemoLargeState />
               ) : !demo ? (
@@ -229,7 +229,7 @@ function ThemeSlideCard({ id }: { id: string }) {
       to={`/s/${id}`}
       className="group block rounded-[6px] outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
-      <div className="relative aspect-video overflow-hidden rounded-[6px] border border-hairline bg-card shadow-edge ring-1 ring-foreground/[0.04] group-hover:shadow-floating group-hover:ring-foreground/20 group-active:scale-[0.99] motion-safe:transition-[box-shadow,--tw-ring-color,scale] motion-safe:duration-200">
+      <div style={{ aspectRatio: `${CANVAS_WIDTH} / ${CANVAS_HEIGHT}` }} className="relative overflow-hidden rounded-[6px] border border-hairline bg-card shadow-edge ring-1 ring-foreground/[0.04] group-hover:shadow-floating group-hover:ring-foreground/20 group-active:scale-[0.99] motion-safe:transition-[box-shadow,--tw-ring-color,scale] motion-safe:duration-200">
         {FirstPage ? (
           <div className="h-full w-full">
             <SlideCanvas flat freezeMotion design={slide?.design}>

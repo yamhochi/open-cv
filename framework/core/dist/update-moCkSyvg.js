@@ -391,122 +391,6 @@ function reorderDefaultExportPagesInSource(source, order) {
 	rebuilt += suffix;
 	return source.slice(0, arrayStart) + rebuilt + source.slice(arrayEnd);
 }
-function findNotesArray(source) {
-	let ast;
-	try {
-		ast = parse(source, {
-			sourceType: "module",
-			plugins: ["typescript", "jsx"],
-			errorRecovery: true
-		});
-	} catch {
-		return "invalid";
-	}
-	const body = ast.program?.body ?? [];
-	for (const stmt of body) {
-		if (stmt.type !== "ExportNamedDeclaration") continue;
-		const decl = stmt.declaration;
-		if (decl?.type !== "VariableDeclaration") continue;
-		const declarations = decl.declarations ?? [];
-		for (const d of declarations) {
-			const id = d.id;
-			if (id?.type !== "Identifier" || id.name !== "notes") continue;
-			const init = d.init;
-			if (init?.type !== "ArrayExpression") return "invalid";
-			const arrayStart = init.start;
-			const arrayEnd = init.end;
-			if (typeof arrayStart !== "number" || typeof arrayEnd !== "number") return "invalid";
-			const rawElements = init.elements ?? [];
-			const elementTexts = [];
-			for (const el of rawElements) {
-				if (el === null) {
-					elementTexts.push("undefined");
-					continue;
-				}
-				if (el.type === "SpreadElement") return "invalid";
-				const start = el.start;
-				const end = el.end;
-				if (typeof start !== "number" || typeof end !== "number") return "invalid";
-				elementTexts.push(source.slice(start, end));
-			}
-			return {
-				arrayStart,
-				arrayEnd,
-				elementTexts
-			};
-		}
-	}
-	return null;
-}
-/**
-* Reorder `export const notes = [...]` to follow the page-array reorder.
-*
-* `order[i]` is the original page index that should land at new position `i`.
-* The notes array is index-aligned with the pages array but may be shorter
-* (trailing `undefined` slots are routinely trimmed). Missing elements are
-* treated as `undefined`, and trailing `undefined` is trimmed again after
-* reordering to keep the file tidy.
-*
-* Returns the rewritten source, the original source if no `notes` export
-* exists or the reorder is a no-op, or `null` if the `notes` export's shape
-* is too surprising to touch safely.
-*/
-function reorderNotesArrayInSource(source, order) {
-	for (const idx of order) if (!Number.isInteger(idx) || idx < 0) return null;
-	const found = findNotesArray(source);
-	if (found === "invalid") return null;
-	if (found === null) return source;
-	const { arrayStart, arrayEnd, elementTexts } = found;
-	const pick = (i) => i >= 0 && i < elementTexts.length ? elementTexts[i] : "undefined";
-	return rebuildNotesArray(source, arrayStart, arrayEnd, order.map(pick));
-}
-/**
-* Remove the note aligned with the page at `index` so the `notes` export stays
-* index-aligned with `export default [...]` after a page deletion. Mirrors
-* {@link removePageFromDefaultExportInSource}.
-*
-* Returns the rewritten source, the original source if no `notes` export exists
-* or the index falls past the recorded notes, or `null` if the `notes` export's
-* shape is too surprising to touch safely.
-*/
-function removeNotesElementInSource(source, index) {
-	if (!Number.isInteger(index) || index < 0) return null;
-	const found = findNotesArray(source);
-	if (found === "invalid") return null;
-	if (found === null) return source;
-	const { arrayStart, arrayEnd, elementTexts } = found;
-	if (index >= elementTexts.length) return source;
-	const next = elementTexts.slice();
-	next.splice(index, 1);
-	return rebuildNotesArray(source, arrayStart, arrayEnd, next);
-}
-/**
-* Duplicate the note aligned with the page at `index`, inserting the copy right
-* after it so the `notes` export stays index-aligned with `export default [...]`
-* after a page duplication. Mirrors {@link duplicatePageInDefaultExportInSource}.
-*
-* Returns the rewritten source, the original source if no `notes` export exists
-* or the index falls past the recorded notes (the new slot and everything after
-* it are absent, so nothing shifts), or `null` if the shape is too surprising.
-*/
-function duplicateNotesElementInSource(source, index) {
-	if (!Number.isInteger(index) || index < 0) return null;
-	const found = findNotesArray(source);
-	if (found === "invalid") return null;
-	if (found === null) return source;
-	const { arrayStart, arrayEnd, elementTexts } = found;
-	if (index >= elementTexts.length) return source;
-	const next = elementTexts.slice();
-	next.splice(index + 1, 0, next[index]);
-	return rebuildNotesArray(source, arrayStart, arrayEnd, next);
-}
-function rebuildNotesArray(source, arrayStart, arrayEnd, elements) {
-	const trimmed = elements.slice();
-	while (trimmed.length > 0 && trimmed[trimmed.length - 1] === "undefined") trimmed.pop();
-	const replacement = trimmed.length === 0 ? "[]" : `[\n${trimmed.map((s) => `  ${s},`).join("\n")}\n]`;
-	if (replacement === source.slice(arrayStart, arrayEnd)) return source;
-	return source.slice(0, arrayStart) + replacement + source.slice(arrayEnd);
-}
 /**
 * Remove the element at `index` from `export default [...]`.
 *
@@ -865,31 +749,8 @@ async function updatePackage(ctx) {
 		message: "Updated @open-slide/core and synced skills."
 	};
 }
-function registerUpdateRoutes(server, ctx) {
-	server.middlewares.use("/__update-check", async (req, res, next) => {
-		if ((req.method ?? "GET") !== "GET") return next();
-		const latest = await fetchLatest(Date.now());
-		const result = {
-			current: ctx.coreVersion,
-			latest,
-			outdated: latest ? isOutdated(ctx.coreVersion, latest) : false
-		};
-		res.setHeader("cache-control", "no-store");
-		json(res, 200, result);
-	});
-	server.middlewares.use("/__update-package", async (req, res, next) => {
-		if ((req.method ?? "GET") !== "POST") return next();
-		const guard = validateMutationRequest(req);
-		if (!guard.ok) return json(res, guard.status, { error: guard.error });
-		try {
-			updateInFlight ??= updatePackage(ctx).finally(() => {
-				updateInFlight = null;
-			});
-			json(res, 200, await updateInFlight);
-		} catch (err) {
-			json(res, 500, { error: err instanceof Error ? err.message : "update failed" });
-		}
-	});
-}
+// The npm update flow is disabled: this project vendors a modified fork of @open-slide/core,
+// and `pnpm up @open-slide/core` would replace it with the published package.
+function registerUpdateRoutes(_server, _ctx) {}
 //#endregion
-export { reorderDefaultExportPagesInSource as C, updateMetaTitleInSource as D, rmSlideDir as E, validateSlideName as O, removePageFromDefaultExportInSource as S, resolveSlideEntry as T, SLIDE_ID_RE as _, readBody as a, duplicateSlideDir as b, FOLDER_ID_RE as c, readManifest as d, validateIcon as f, shortId as g, writeManifest as h, makeContext as i, validateMutationRequest as k, foldersManifestPath as l, validateReorder as m, registerUpdateRoutes as n, readSlideSource as o, validateName as p, json as r, resolveSlideEntryPath as s, detectPackageManager as t, newFolderId as u, duplicateNotesElementInSource as v, reorderNotesArrayInSource as w, removeNotesElementInSource as x, duplicatePageInDefaultExportInSource as y };
+export { reorderDefaultExportPagesInSource as C, updateMetaTitleInSource as D, rmSlideDir as E, validateSlideName as O, removePageFromDefaultExportInSource as S, resolveSlideEntry as T, SLIDE_ID_RE as _, readBody as a, duplicateSlideDir as b, FOLDER_ID_RE as c, readManifest as d, validateIcon as f, shortId as g, writeManifest as h, makeContext as i, validateMutationRequest as k, foldersManifestPath as l, validateReorder as m, registerUpdateRoutes as n, readSlideSource as o, validateName as p, json as r, resolveSlideEntryPath as s, detectPackageManager as t, newFolderId as u, duplicatePageInDefaultExportInSource as y };

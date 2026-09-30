@@ -365,8 +365,8 @@ function useSlidePageNumber() {
 }
 //#endregion
 //#region src/app/lib/sdk.ts
-const CANVAS_WIDTH = 1920;
-const CANVAS_HEIGHT = 1080;
+const CANVAS_WIDTH = 794;
+const CANVAS_HEIGHT = 1123;
 //#endregion
 //#region src/app/lib/use-media-query.ts
 function matchesMediaQuery(query) {

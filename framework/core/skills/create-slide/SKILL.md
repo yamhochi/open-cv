@@ -1,19 +1,19 @@
 ---
 name: create-slide
-description: Use this skill when the user wants to create, draft, author, or generate new slides / a presentation in this open-slide repo. Triggers on phrases like "make slides about X", "make a deck about X", "create a presentation", "draft slides for", "new slide", "a deck with speaker notes / a script", or when the user asks to add content under `slides/`. Do NOT use for editing the framework itself — only for authoring content inside `slides/<id>/`.
+description: Use this skill when the user wants to create, draft, author, or generate new slides / a presentation in this open-slide repo. Triggers on phrases like "make slides about X", "make a deck about X", "create a presentation", "draft slides for", "new slide", or when the user asks to add content under `slides/`. Do NOT use for editing the framework itself — only for authoring content inside `slides/<id>/`.
 ---
 
-# Create a slide in open-slide
+# Create a template in open-slide
 
-This skill owns the **workflow** for drafting a new deck. The technical reference — file contract, 1920×1080 canvas, type scale, palette, layout, assets — lives in the **`slide-authoring`** skill. Read that skill whenever you need details on *how* a page is structured. This skill assumes you'll consult it before writing code.
+This skill owns the **workflow** for drafting a new deck. The technical reference — file contract, 794×1123 (A4) canvas, type scale, palette, layout, assets — lives in the **`slide-authoring`** skill. Read that skill whenever you need details on *how* a page is structured. This skill assumes you'll consult it before writing code.
 
-You only write files under `slides/<id>/`. Never modify `package.json`, `open-slide.config.ts`, or existing slides.
+You only write files under `slides/<id>/`. Never modify `package.json`, `open-slide.config.ts`, or existing templates.
 
 ## Step 1 — Pick a theme
 
 List files under `themes/`. If any theme markdown files exist (anything other than `README.md`), call `AskUserQuestion` with each theme id as an option plus a final **"no theme — design from scratch"** option. (`AskUserQuestion` holds at most 4 options — with 4+ themes, offer the 3 most topic-relevant plus "no theme"; the auto-added "Other" lets the user name any omitted theme.)
 
-- If the user picks a theme: read `themes/<id>.md` end-to-end. The theme's palette, typography, layout, and Title/Footer components are now authoritative — copy them directly into the slide. If the theme declares a webfont import, load it per `references/webfonts.md` in `slide-authoring` (module-level, slide-keyed injection) — don't let the slide silently fall back to system fonts. **Also set `theme: '<theme-id>'` on the `meta` export in `index.tsx`** (e.g. `export const meta: SlideMeta = { title: '…', createdAt: '…', theme: '<theme-id>' };` — `createdAt` per the file contract in `slide-authoring`) so the slide back-links to the theme (chip on the slide card + listing on `/themes/<id>`). In Step 2, skip the **aesthetic direction** question (the theme already commits to one direction); you still need the topic itself, so confirm it before moving on. Page count and text density are independent of theme — ask those normally. For motion, if the theme's Motion section commits to a philosophy, present it as the "(Recommended)" option and reuse the theme's paste-ready keyframes; the user can still override.
+- If the user picks a theme: read `themes/<id>.md` end-to-end. The theme's palette, typography, layout, and Title/Footer components are now authoritative — copy them directly into the template. If the theme declares a webfont import, load it per `references/webfonts.md` in `slide-authoring` (module-level, slide-keyed injection) — don't let the template silently fall back to system fonts. **Also set `theme: '<theme-id>'` on the `meta` export in `index.tsx`** (e.g. `export const meta: SlideMeta = { title: '…', createdAt: '…', theme: '<theme-id>' };` — `createdAt` per the file contract in `slide-authoring`) so the template back-links to the theme (chip on the template card + listing on `/themes/<id>`). In Step 2, skip the **aesthetic direction** question (the theme already commits to one direction); you still need the topic itself, so confirm it before moving on. Page count and text density are independent of theme — ask those normally. For motion, if the theme's Motion section commits to a philosophy, present it as the "(Recommended)" option and reuse the theme's paste-ready keyframes; the user can still override.
 - If the user picks "no theme", or `themes/` contains no theme markdown files: proceed to Step 2 unchanged.
 
 If you skip the aesthetic question because a theme was picked, restate the theme name in Step 2 so the user can correct course before you start writing.
@@ -22,7 +22,7 @@ If you skip the aesthetic question because a theme was picked, restate the theme
 
 **Before writing any code, lock in the four key style decisions below via `AskUserQuestion`.** They shape every downstream choice (layout, type scale, asset needs, motion code), so locking them in up front avoids rework. Only skip a question when it's already unambiguously answered — by the user's original message, or by a theme picked in Step 1 (a theme settles aesthetic direction, so ask only the remaining three) — and if you skip, restate your assumption so they can correct it.
 
-**Topic comes first.** A meaningful aesthetic recommendation requires knowing what the deck is about. If the user's initial request is thin ("make me a deck", "draft some slides"), make a *separate* `AskUserQuestion` call first to gather topic, audience, and any draft outline. Skip this only if the topic is already clear from the user's message — in which case restate your reading of the topic in the next call so they can correct course.
+**Topic comes first.** A meaningful aesthetic recommendation requires knowing what the deck is about. If the user's initial request is thin ("make me a deck", "draft some templates"), make a *separate* `AskUserQuestion` call first to gather topic, audience, and any draft outline. Skip this only if the topic is already clear from the user's message — in which case restate your reading of the topic in the next call so they can correct course.
 
 Then ask these four in a single `AskUserQuestion` call (multi-question form):
 
@@ -41,13 +41,13 @@ Then ask these four in a single `AskUserQuestion` call (multi-question form):
 
 After those four, ask follow-ups **only if still unclear**: brand colors, required assets. Don't pad the conversation with questions already answered.
 
-## Step 3 — Pick a slide id
+## Step 3 — Pick a template id
 
 Use **kebab-case**, short, descriptive. Examples: `rust-intro`, `q2-roadmap`, `team-offsite-2026`. Check `slides/` to avoid collisions.
 
 ## Step 4 — Plan the structure
 
-Sketch the slide as a list of page roles before writing code. Common page types:
+Sketch the template as a list of page roles before writing code. Common page types:
 
 | Role             | Purpose                                       |
 | ---------------- | --------------------------------------------- |
@@ -68,15 +68,13 @@ If the deck topic naturally calls for specific real images the user must supply 
 
 Pick one coherent palette / type scale / aesthetic and hold it across every page. The full set of constraints (palette structure, type scale, padding, aesthetic options) lives in `slide-authoring` — apply it.
 
-**Default: declare a top-level `export const design: DesignSystem = { … }`** at the top of `index.tsx` (after imports) using the chosen palette / type scale, and reference the values via `var(--osd-X)` from inline styles. This keeps the slide tweakable from the Design panel after generation, which is what the user almost always wants. Only skip the `design` const for a one-off slide whose palette is intentionally locked and not meant to be re-themed — in that case, fall back to the local `palette` constants pattern. The "Design system" section of `slide-authoring` covers the format and available tokens.
+**Default: declare a top-level `export const design: DesignSystem = { … }`** at the top of `index.tsx` (after imports) using the chosen palette / type scale, and reference the values via `var(--osd-X)` from inline styles. This keeps the template tweakable from the Design panel after generation, which is what the user almost always wants. Only skip the `design` const for a one-off template whose palette is intentionally locked and not meant to be re-themed — in that case, fall back to the local `palette` constants pattern. The "Design system" section of `slide-authoring` covers the format and available tokens.
 
 If the `frontend-design` skill is available, consult it for deeper aesthetic guidance when the user wants something bold.
 
 ## Step 6 — Write `slides/<id>/index.tsx`
 
 Read the **`slide-authoring`** skill before writing — it covers the file contract, canvas rules, type scale, spacing, and asset imports, and it includes a starter template you can copy. Don't duplicate that knowledge here; use it.
-
-If the user asked for a speech script / speaker notes (in the initial request or at any point after), write it into the slide's `export const notes` array — the framework's built-in speaker-notes feature, shown in the presenter view. See **Speaker notes** in `slide-authoring` for the contract. Never deliver a script as a markdown or text file.
 
 ## Step 7 — Self-review
 
@@ -86,9 +84,8 @@ Run the checklist in `slide-authoring` ("Self-review before finishing"). It cove
 
 Tell the user:
 
-- The slide id and file path you created.
+- The template id and file path you created.
 - That the dev server will hot-reload — they can open `http://localhost:5173/s/<id>` (or refresh the home page).
-- If you wrote speaker notes: that they live in the slide's `notes` export and show up in the viewer's notes drawer and the presenter view in present mode.
 - If dev isn't running: run the project's `dev` script from the project root with its package manager (`npm run dev`, `pnpm dev`, … — match the lockfile).
 
 Don't run the dev server yourself unless asked.

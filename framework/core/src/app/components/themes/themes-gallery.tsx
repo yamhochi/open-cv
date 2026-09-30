@@ -2,6 +2,7 @@ import { Palette } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { format, useLocale } from '@/lib/use-locale';
 import { SlidePageProvider } from '../../lib/page-context';
+import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../../lib/sdk';
 import { loadThemeDemo, type Theme, type ThemeDemoModule, themes } from '../../lib/themes';
 import { SlideCanvas } from '../slide-canvas';
 
@@ -47,7 +48,7 @@ function ThemeCard({
       aria-label={ariaLabel}
       className="group block w-full rounded-[6px] text-left outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
-      <div className="relative aspect-video overflow-hidden rounded-[6px] border border-hairline bg-card shadow-edge ring-1 ring-foreground/[0.04] group-hover:shadow-floating group-hover:ring-foreground/20 group-active:scale-[0.99] motion-safe:transition-[box-shadow,--tw-ring-color,scale] motion-safe:duration-200">
+      <div style={{ aspectRatio: `${CANVAS_WIDTH} / ${CANVAS_HEIGHT}` }} className="relative overflow-hidden rounded-[6px] border border-hairline bg-card shadow-edge ring-1 ring-foreground/[0.04] group-hover:shadow-floating group-hover:ring-foreground/20 group-active:scale-[0.99] motion-safe:transition-[box-shadow,--tw-ring-color,scale] motion-safe:duration-200">
         <ThemePreview theme={theme} />
       </div>
       <div className="mt-3">

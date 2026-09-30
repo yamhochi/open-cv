@@ -73,7 +73,7 @@ export function SlideCommandMenu({
         id: 'present-presenter',
         label: t.slide.presentPresenter,
         icon: <MonitorSpeaker />,
-        keywords: ['presenter', 'notes', 'speaker'],
+        keywords: ['presenter'],
         shortcut: 'P',
         run: handlers.onPresenterView,
       },

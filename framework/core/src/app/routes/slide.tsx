@@ -71,7 +71,6 @@ import { useWheelPageNavigation } from '@/lib/use-wheel-page-navigation';
 import { cn } from '@/lib/utils';
 import { SlideCommandMenu } from '../components/command/slide-command-menu';
 import { PdfProgressToast, PptxProgressToast } from '../components/export-progress-toast';
-import { NotesDrawer } from '../components/notes-drawer';
 import { OverviewGrid } from '../components/overview-grid';
 import { openPresenterWindow, Player } from '../components/player';
 import { SlideCanvas } from '../components/slide-canvas';
@@ -85,7 +84,6 @@ import {
   exportSlideAsPptx,
   type PptxExportProgress,
 } from '../lib/export-pptx';
-import { remapNotesSessionCacheAfterReorder } from '../lib/inspector/use-notes';
 import type { SlideModule } from '../lib/sdk';
 import { usePrefersReducedMotion } from '../lib/use-prefers-reduced-motion';
 import { useSlideModule } from '../lib/use-slide-module';
@@ -201,8 +199,6 @@ export function Slide() {
       const [movedIdx] = order.splice(from, 1);
       order.splice(to, 0, movedIdx);
 
-      remapNotesSessionCacheAfterReorder(slideId, order);
-
       // Keep the user looking at the same page they were on before the drag.
       let nextIndex = index;
       if (index === from) nextIndex = to;
@@ -222,8 +218,6 @@ export function Slide() {
         }
       } catch (err) {
         setPages(before);
-        const inverse = order.map((_, i) => order.indexOf(i));
-        remapNotesSessionCacheAfterReorder(slideId, inverse);
         toast.error(`Reorder failed: ${String((err as Error).message ?? err)}`);
       }
     },
@@ -873,14 +867,6 @@ export function Slide() {
                     onCloseDesign={() => setDesignOpen(false)}
                   />
                 </div>
-                {import.meta.env.DEV && (
-                  <NotesDrawer
-                    slideId={slideId}
-                    index={index}
-                    total={pageCount}
-                    initial={slide.notes?.[index]}
-                  />
-                )}
                 <OverviewGrid
                   pages={pages}
                   design={slide.design}

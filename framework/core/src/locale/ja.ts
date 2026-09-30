@@ -31,7 +31,7 @@ export const ja: Locale = {
   },
 
   home: {
-    appTitle: 'open-slide',
+    appTitle: 'resume-builder',
     draft: '下書き',
     duplicate: '複製',
     themes: 'テーマ',
@@ -41,7 +41,7 @@ export const ja: Locale = {
     menu: 'メニュー',
     newFolder: '新規フォルダ',
     folderName: 'フォルダ名',
-    updateAvailable: 'open-slide {version} が利用可能です',
+    updateAvailable: 'resume-builder {version} が利用可能です',
     updatePackage: '更新',
     updatingPackage: '更新中',
     updatePackageDone: '更新しました。新しいバージョンを使うには dev server を再起動してください。',
@@ -141,11 +141,6 @@ export const ja: Locale = {
     upNext: '次のスライド',
     lastSlide: '最後のスライド',
     endOfDeck: 'デッキの終わり',
-    speakerNotes: '発表者ノート',
-    notesTextSmaller: 'ノートの文字を小さく',
-    notesTextLarger: 'ノートの文字を大きく',
-    noNotesPrefix: 'このスライドには発表者ノートがありません。スライドモジュールに ',
-    noNotesSuffix: ' を追加するとここに表示されます。',
     blackScreen: '黒い画面',
     whiteScreen: '白い画面',
     prev: '前へ',
@@ -515,15 +510,6 @@ export const ja: Locale = {
     dropOverlay: 'ここにドロップして使用',
     uploading: 'アップロード中…',
     uploadFailed: '画像のアップロードに失敗しました',
-  },
-
-  notesDrawer: {
-    toggle: '発表者ノート',
-    pageLabel: '{n} / {total} ページ',
-    placeholder: 'このスライドの発表者ノートを記入（Markdown 対応）…',
-    statusSaving: '保存中…',
-    statusSaved: '保存済み',
-    statusError: '保存に失敗しました: {msg}',
   },
 
   themes: {

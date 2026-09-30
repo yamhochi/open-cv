@@ -1,6 +1,6 @@
 # Page transitions (`SlideTransition`)
 
-The framework can run an enter/exit animation between every slide change. There's **no default** — pages snap unless you declare a `SlideTransition`. Snap-swap is a perfectly tasteful default; only opt in when motion adds something.
+The framework can run an enter/exit animation between every template change. There's **no default** — pages snap unless you declare a `SlideTransition`. Snap-swap is a perfectly tasteful default; only opt in when motion adds something.
 
 `prefers-reduced-motion: reduce` is honored automatically. You don't write a fallback.
 
@@ -72,7 +72,7 @@ The single loudest signal of "made in PowerPoint" is six different transitions i
 
 ## Tasteful family — six members, one DNA
 
-Use this set as a starting point. Pick one as the deck's house transition; optionally reserve a second for hero/cover slides and a third for genuine section breaks. Every member holds the outgoing page and fades the incoming one in on top, so none of them can flash the container background.
+Use this set as a starting point. Pick one as the deck's house transition; optionally reserve a second for hero/cover templates and a third for genuine section breaks. Every member holds the outgoing page and fades the incoming one in on top, so none of them can flash the container background.
 
 ```tsx
 const EASE_OUT = 'cubic-bezier(0, 0, 0.2, 1)';
@@ -152,7 +152,7 @@ All six share the same DNA — they only differ in which property carries the sm
 
 ## Direction-aware keyframes (use sparingly)
 
-Most tasteful tools don't mirror on backward navigation. When you genuinely need to — e.g. a horizontal slide that should reverse — use `--osd-dir` inside `calc()`:
+Most tasteful tools don't mirror on backward navigation. When you genuinely need to — e.g. a horizontal template that should reverse — use `--osd-dir` inside `calc()`:
 
 ```tsx
 { transform: 'translateX(calc(var(--osd-dir, 1) * 8px))' },
@@ -166,11 +166,11 @@ If you find yourself reaching for this on every transition, you're probably over
 - ❌ Fading the exit to `opacity: 0` and delaying the enter — the framework ignores the exit fade, so the outgoing page just sits there for the delay (a dead beat); with `throughBackground: true` the same shape becomes a flash of the container background. Write a hold instead.
 - ❌ `throughBackground: true` on the house transition, or between pages with different backgrounds — every cut dips to black.
 - ❌ Six different transitions across six pages — the single loudest "made in PowerPoint" tell.
-- ❌ `translateX(100%)` slide-from-side — iOS modal / PowerPoint Push; not a slide change.
+- ❌ `translateX(100%)` slide-from-side — iOS modal / PowerPoint Push; not a template change.
 - ❌ Aggressive scale-pop (e.g. `0.85 → 1`) + blur — lightbox / photo-viewer vocabulary; implies zooming *into* something.
 - ❌ `clip-path: inset(…)` reveals — After Effects vocabulary; theatrical.
 - ❌ Parallel blur on both layers at once — visual mush; the eye can't fixate.
-- ❌ Duration > 350 ms for a standard slide change — drags.
+- ❌ Duration > 350 ms for a standard template change — drags.
 - ❌ Translate > 12 px or scale > 3% — reads as rupture, not continuity.
 - ❌ `linear` easing — feels like a slideshow, not a product.
 - ❌ Declaring a transition on every deck. **If you don't have a clear reason, omit it.** Snap-swap is fine.

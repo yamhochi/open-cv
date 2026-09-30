@@ -142,11 +142,6 @@ export type Locale = {
     upNext: string;
     lastSlide: string;
     endOfDeck: string;
-    speakerNotes: string;
-    notesTextSmaller: string;
-    notesTextLarger: string;
-    noNotesPrefix: string;
-    noNotesSuffix: string;
     blackScreen: string;
     whiteScreen: string;
     prev: string;
@@ -537,17 +532,6 @@ export type Locale = {
     dropOverlay: string;
     uploading: string;
     uploadFailed: string;
-  };
-
-  notesDrawer: {
-    toggle: string;
-    /** template: "page {n}/{total}" */
-    pageLabel: string;
-    placeholder: string;
-    statusSaving: string;
-    statusSaved: string;
-    /** template: "Save failed: {msg}" */
-    statusError: string;
   };
 
   themes: {
