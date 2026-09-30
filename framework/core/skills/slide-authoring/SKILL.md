@@ -1,6 +1,6 @@
 ---
 name: slide-authoring
-description: Technical reference for writing or editing open-slide pages — file contract, 1920×1080 canvas, type scale, layout, palette/visual direction, assets, speaker notes, stepped reveals, page transitions, and morph transitions. Consult this whenever you are about to write or modify any file under `slides/<id>/`, including from inside the `create-slide` or `apply-comments` workflows, or for any ad-hoc slide edit. Triggers on phrases like "edit slide", "tweak this page", "fix the layout", "change the palette", "reveal one by one", "add a transition", "morph transition", "write the speaker notes", "generate the script / talk track", "investigate the slide framework", "how do slides work here".
+description: Technical reference for writing or editing open-slide pages — file contract, 794×1123 (A4) canvas, type scale, layout, palette/visual direction, assets, stepped reveals, page transitions, and morph transitions. Consult this whenever you are about to write or modify any file under `slides/<id>/`, including from inside the `create-slide` or `apply-comments` workflows, or for any ad-hoc slide edit. Triggers on phrases like "edit slide", "tweak this page", "fix the layout", "change the palette", "reveal one by one", "add a transition", "morph transition", "investigate the slide framework", "how do slides work here".
 ---
 
 # Authoring open-slide pages
@@ -9,8 +9,8 @@ This skill is the **technical reference** for everything that happens inside `sl
 
 - `create-slide` owns "draft a new deck" — it asks the user scoping questions, then delegates the *how* to this skill.
 - `apply-comments` owns "process inspector markers" — it finds markers and applies edits, but the edits themselves follow the rules here.
-- `current-slide` resolves deictic references ("this page", "the slide I'm on") to a concrete `slideId` + `pageIndex`. Consult it **first** when the user references the current slide without naming it, then come back here for how to edit it.
-- Any ad-hoc slide edit (manual tweak, one-off fix) should also consult this skill before touching the file.
+- `current-slide` resolves deictic references ("this page", "the template I'm on") to a concrete `slideId` + `pageIndex`. Consult it **first** when the user references the current template without naming it, then come back here for how to edit it.
+- Any ad-hoc template edit (manual tweak, one-off fix) should also consult this skill before touching the file.
 
 When any of those paths reach the point of *writing React code for a page*, this is the source of truth. Do not duplicate the knowledge below into other skills — link here instead.
 
@@ -20,7 +20,7 @@ Each framework primitive has a full reference file under `references/` in this s
 
 | Primitive | Read before | File |
 | --- | --- | --- |
-| `design` const + `var(--osd-X)` tokens | writing any new slide (default baseline) | `references/design-system.md` |
+| `design` const + `var(--osd-X)` tokens | writing any new template (default baseline) | `references/design-system.md` |
 | Assets + `<ImagePlaceholder>` | importing images/videos or leaving a placeholder | `references/assets.md` |
 | Webfonts | loading any non-system font | `references/webfonts.md` |
 | `useSlidePageNumber()` | rendering a page-number footer | `references/page-numbers.md` |
@@ -30,11 +30,11 @@ Each framework primitive has a full reference file under `references/` in this s
 
 ## Hard rules
 
-- Put the slide under `slides/<kebab-case-id>/`.
+- Put the template under `slides/<kebab-case-id>/`.
 - Entry is `slides/<id>/index.tsx`. Images/videos/fonts go under `slides/<id>/assets/`.
-- Do **not** touch `package.json`, `open-slide.config.ts`, or other slides.
+- Do **not** touch `package.json`, `open-slide.config.ts`, or other templates.
 - Do not add dependencies. Only `react`, `@open-slide/core`, and standard web APIs are available.
-- A slide is **one `index.tsx` plus `assets/`** — nothing else. Do not create sibling `.tsx`/`.ts` files (`Card.tsx`, `components/`, `helpers.ts`, etc.); helper components and constants go inside `index.tsx`. Do not create `README.md` or other prose files either — speaker notes / a talk script belong in the `notes` export (see **Speaker notes** below), not in a markdown file.
+- A template is **one `index.tsx` plus `assets/`** — nothing else. Do not create sibling `.tsx`/`.ts` files (`Card.tsx`, `components/`, `helpers.ts`, etc.); helper components and constants go inside `index.tsx`. Do not create `README.md` or other prose files either.
 
 ## File contract
 
@@ -53,35 +53,14 @@ export default [Cover, Body] satisfies Page[];
 ```
 
 - `export default` is a **non-empty array of zero-prop React components**, one per page, in order.
-- `meta.title` (optional) shows in the slide header. Default is the folder name.
-- The slide id is the kebab-case folder name. Pick something short and descriptive (`q2-roadmap`, `team-offsite-2026`).
-- `meta.theme` (optional) marks the slide as built from a theme under `themes/`. The id must match a `<id>.md` basename. Surfaces a back-link chip on the slide card and lists the slide on `/themes/<id>`. Omit if the slide isn't derived from a registered theme.
-- `meta.createdAt` is an **ISO 8601 string literal** (e.g. `'2026-05-16T12:00:00Z'`) set once when the slide is scaffolded. The home page uses it for the default "newest first" sort. Always include it on new slides — **immediately before writing the file, run `node -e "console.log(new Date().toISOString())"` via Bash and paste the exact output** as the value. Don't type a timestamp from memory — you will get the date or time wrong. Must be a plain string literal (no `new Date(...)` or imports in the slide itself) — the framework reads it via a regex at build time, not by evaluating the module.
+- `meta.title` (optional) shows in the template header. Default is the folder name.
+- The template id is the kebab-case folder name. Pick something short and descriptive (`q2-roadmap`, `team-offsite-2026`).
+- `meta.theme` (optional) marks the template as built from a theme under `themes/`. The id must match a `<id>.md` basename. Surfaces a back-link chip on the template card and lists the template on `/themes/<id>`. Omit if the template isn't derived from a registered theme.
+- `meta.createdAt` is an **ISO 8601 string literal** (e.g. `'2026-05-16T12:00:00Z'`) set once when the template is scaffolded. The home page uses it for the default "newest first" sort. Always include it on new templates — **immediately before writing the file, run `node -e "console.log(new Date().toISOString())"` via Bash and paste the exact output** as the value. Don't type a timestamp from memory — you will get the date or time wrong. Must be a plain string literal (no `new Date(...)` or imports in the template itself) — the framework reads it via a regex at build time, not by evaluating the module.
 
-## Speaker notes (`notes` export)
+## Editing an existing template
 
-The framework has **built-in speaker notes**: an optional `notes` export in `index.tsx`, index-aligned with the default page array. The viewer shows them in the notes drawer and present mode shows them in the presenter view next to the timer.
-
-**When the user asks for a speech script, talk track, or presenter notes — in any language — write it into this export, never into a markdown/text file.** A `script.md` or `notes.md` is invisible to the runtime; the `notes` export is the only place the presenter view reads.
-
-```tsx
-export const notes: (string | undefined)[] = [
-  'Open with the analyst quote, then introduce yourself.',
-  undefined,
-  `Walk through the three pillars, one beat each.
-Pause for questions before moving on.`,
-];
-```
-
-- One entry per page, same order as the `export default` array. `notes[0]` belongs to the first page.
-- Entries are **plain text** — line breaks are preserved, markdown is not rendered. Use a template literal for multi-line notes, a normal string for one-liners.
-- Use `undefined` for a page with no notes; trailing `undefined` entries can be dropped.
-- When you add, remove, or reorder pages, re-align `notes` in the same edit — a shifted index silently attaches the wrong script to every page after it.
-- Write notes as something to *say*, not a summary of what's on screen: openers, transitions, numbers to cite, timing cues.
-
-## Editing an existing slide
-
-A finished slide commonly runs 1000–1800 lines. When you only need to touch one page, **don't read the whole file** — locate the page first, then read just that range:
+A finished template commonly runs 1000–1800 lines. When you only need to touch one page, **don't read the whole file** — locate the page first, then read just that range:
 
 ```bash
 grep -n ": Page = " slides/<id>/index.tsx
@@ -91,57 +70,57 @@ This lists every `const Foo: Page = …` declaration with its line number. Read 
 
 ## Canvas
 
-Every page renders into a fixed **1920 × 1080** canvas. The framework scales it; you design as if the viewport is literally 1920×1080.
+Every page renders into a fixed **794 × 1123** canvas (A4 portrait at 96 dpi, ratio 1 : √2). The framework scales it in the editor and thumbnails and shows it at 100% in present mode; you design as if the viewport is literally 794×1123.
 
 - Use **absolute pixel values** for `font-size`, padding, positioning. No `rem`, no `vw`/`vh`, no `%` for type.
 - The root element of each page should fill the canvas: `width: '100%'; height: '100%'`.
 - Prefer inline `style={{ … }}`. Any CSS you load is global — scope classnames carefully.
 
-### Type scale (start here, adjust to taste)
+### Type scale (document sizes — start here)
 
-| Element          | Size       |
-| ---------------- | ---------- |
-| Hero title       | 140–200px  |
-| Section heading  | 80–120px   |
-| Page heading     | 56–80px    |
-| Body text        | 32–44px    |
-| Caption / label  | 22–28px    |
+| Element                 | Size      |
+| ----------------------- | --------- |
+| Name / page title       | 22–28px   |
+| Section heading         | 13–15px   |
+| Body text               | 11–13px   |
+| Caption / meta / dates  | 10–11px   |
+
+This is a printed page, not a projected screen: body copy under 11px is hard to read on paper, and anything over ~28px is a headline.
 
 ### Spacing
 
-- Content padding: **100–160px** from canvas edges. Never let text touch the edge.
-- Line-height: 1.2 for headings, 1.5–1.7 for body.
-- Breathing room between elements: 32–64px.
+- Content padding: **40–56px** from canvas edges (the resume template uses 48px). Never let text touch the edge.
+- Line-height: 1.2 for headings, 1.4–1.5 for body.
+- Between sections: 32–40px. Between entries in a section: 16–20px. Within an entry: 4px.
 
-### Vertical budget — content MUST fit 1080px
+### Vertical budget — content MUST fit 1123px
 
-The canvas does **not** scroll. Anything past the 1080px bottom edge is silently cropped. Before writing JSX, do the math on paper and confirm the page fits. This is the #1 cause of broken slides — assume you will overflow unless you've checked.
+The canvas does **not** scroll. Anything past the 1123px bottom edge is silently cropped. Before writing JSX, do the math on paper and confirm the page fits. This is the #1 cause of broken pages — assume you will overflow unless you've checked.
 
-**Usable height** = `1080 − top_padding − bottom_padding`. With 120px padding on each side that's **840px**. With 160px each side, **760px**. Pick the padding first, then design within that budget.
+**Usable height** = `1123 − top_padding − bottom_padding`. With 48px padding on each side that's **1027px**. Pick the padding first, then design within that budget.
 
-**Element height** = `font_size × line_height × number_of_lines`. A bullet that wraps to 2 lines counts as 2 lines. Add the gap below it (32–64px) before summing the next element.
+**Element height** = `font_size × line_height × number_of_lines`. A bullet that wraps to 2 lines counts as 2 lines. Add the gap below it before summing the next element.
 
-**Worked example — single content page, 120px padding (budget = 840px):**
+**Worked example — 48px padding (budget = 1027px):**
 
-| Element                                  | Height                  |
-| ---------------------------------------- | ----------------------- |
-| Heading: 80px × 1.2 × 1 line             | 96px                    |
-| Gap                                      | 64px                    |
-| Body paragraph: 40px × 1.6 × 3 lines     | 192px                   |
-| Gap                                      | 48px                    |
-| 5 bullets: 40px × 1.6 × 1 line each      | 320px (5 × 64px)        |
-| 4 gaps between bullets: 24px each        | 96px                    |
-| **Total**                                | **816px ✅ fits in 840** |
+| Element                                    | Height              |
+| ------------------------------------------ | ------------------- |
+| Header (name + contact line)               | 24px                |
+| Gap                                        | 24px                |
+| Summary: 12px × 1.45 × 3 lines             | 53px                |
+| Gap between sections                       | 40px                |
+| Section title + 4 skill cells (2×2)        | 14 + 20 + 2×70 = 174px |
+| Gap between sections                       | 40px                |
+| Section title + 2 entries (~9 lines each)  | 14 + 20 + 2×(12×1.5×9 + 32) = 428px |
+| **Total**                                  | **~783px ✅ fits in 1027** |
 
-Swap the heading to 120px or add a 6th bullet and you're over. **Verify every page like this before you write it.**
+**Verify every page like this before you write it**, then check it in the dev server.
 
 **Page-level rules:**
 
-- One heading + body OR one heading + ≤5 short bullets. Not both blocks of body copy *and* a long bullet list.
-- A bullet should fit on one line at the chosen font size. If it wraps, either shorten the copy or move it to its own page.
-- Hero title pages (140–200px) carry a title + 1 subtitle + maybe an eyebrow — nothing else.
-- Section headings (80–120px) need almost nothing else on the page.
-- If you find yourself raising padding, shrinking type below the scale's lower bound, or tightening body line-height under 1.4 to make things fit — **split into two pages instead**. Splitting is always the right answer when the budget is tight.
+- An entry (date line → company · role → bullets) is atomic: never split it across a page break.
+- If content overflows, move whole entries to the next page and end the page with a "continued →" marker — don't shrink type below the scale's lower bound or tighten body line-height under 1.4.
+- Repeat the section title with "(continued)" on the next page.
 
 **Never** use `overflow: auto/scroll`, negative margins, or transforms to hide overflow. The canvas is fixed; cropped content is gone.
 
@@ -162,15 +141,15 @@ The default is a system font stack — prefer it. When a deck genuinely needs a 
 
 ## Themes
 
-If `themes/<id>.md` exists at the project root and the slide is meant to follow it, **the theme file overrides the defaults in this skill** — its palette, typography, layout padding, and Title/Footer components are authoritative. Read the theme file before applying anything else in this section.
+If `themes/<id>.md` exists at the project root and the template is meant to follow it, **the theme file overrides the defaults in this skill** — its palette, typography, layout padding, and Title/Footer components are authoritative. Read the theme file before applying anything else in this section.
 
-Themes are produced by the `create-theme` skill and are pure documentation: copy the palette and the paste-ready Title / Footer / Eyebrow components straight into your slide. If the theme's frontmatter has `mode: dark` or `mode: light`, treat that as the slide's background mode (e.g. when picking which logo variant to import).
+Themes are produced by the `create-theme` skill and are pure documentation: copy the palette and the paste-ready Title / Footer / Eyebrow components straight into your template. If the theme's frontmatter has `mode: dark` or `mode: light`, treat that as the template's background mode (e.g. when picking which logo variant to import).
 
 ## Design system (opt-in, per-slide)
 
-A slide can declare typed design tokens at the top of `index.tsx` — `export const design: DesignSystem = { palette, fonts, typeScale, radius }` — and consume them via `var(--osd-X)` in inline styles. The framework injects the CSS variables at the canvas root, and the dev UI's Design panel can live-tweak them.
+A template can declare typed design tokens at the top of `index.tsx` — `export const design: DesignSystem = { palette, fonts, typeScale, radius }` — and consume them via `var(--osd-X)` in inline styles. The framework injects the CSS variables at the canvas root, and the dev UI's Design panel can live-tweak them.
 
-**Default to using it.** Every new slide should declare a `design` const so it stays tweakable from the panel after generation. Only fall back to plain palette constants for a one-off slide whose palette is intentionally locked (`references/design-system.md` covers the fallback).
+**Default to using it.** Every new template should declare a `design` const so it stays tweakable from the panel after generation. Only fall back to plain palette constants for a one-off template whose palette is intentionally locked (`references/design-system.md` covers the fallback).
 
 `references/design-system.md` has the full token shape, the two consumption surfaces (`var(--osd-X)` vs direct `design.X` reads), Design panel behavior, and the format constraints the panel's AST writer requires. Read it before writing the const.
 
@@ -252,7 +231,7 @@ export default [Cover, Content] satisfies Page[];
 
 ## Assets
 
-Slide-local assets live under `slides/<id>/assets/` and are imported as ES modules (`import hero from './assets/hero.jpg'`). Global assets shared across decks (logos, avatars, recurring icons) live in the project root `assets/` and are imported via the `@assets` alias. For a pure-text slide, don't create `slides/<id>/assets/` at all.
+Slide-local assets live under `slides/<id>/assets/` and are imported as ES modules (`import hero from './assets/hero.jpg'`). Global assets shared across decks (logos, avatars, recurring icons) live in the project root `assets/` and are imported via the `@assets` alias. For a pure-text template, don't create `slides/<id>/assets/` at all.
 
 `references/assets.md` covers import forms (module vs `new URL(...)`), the `@assets` alias, and how themes name asset paths.
 
@@ -274,7 +253,7 @@ Read `references/steps.md` before authoring a stepped page — it covers composi
 
 ## Page transitions
 
-The framework can run an enter/exit animation between slide changes, declared as a `SlideTransition` (module-level default, per-page override; the **incoming page wins**). There's **no default** — pages snap unless you opt in, and snap-swap is a perfectly tasteful default. If you do opt in: one motion DNA per deck, 200–280 ms, magnitude under 12 px / 3% scale, the outgoing page holds while the incoming page fades in on top (the framework ignores exit opacity unless `throughBackground: true`).
+The framework can run an enter/exit animation between template changes, declared as a `SlideTransition` (module-level default, per-page override; the **incoming page wins**). There's **no default** — pages snap unless you opt in, and snap-swap is a perfectly tasteful default. If you do opt in: one motion DNA per deck, 200–280 ms, magnitude under 12 px / 3% scale, the outgoing page holds while the incoming page fades in on top (the framework ignores exit opacity unless `throughBackground: true`).
 
 Read `references/transitions.md` before declaring one — it has the full type contract, design principles, a six-member "tasteful family" of ready-to-use transitions sharing one DNA, direction-aware keyframes, and the anti-pattern list.
 
@@ -288,7 +267,7 @@ Read `references/morph.md` before writing one — the seven rules there (held ex
 
 When a page has visually repeated items — cards, logo rows, gallery tiles, list rows, step indicators — **define a small component and instantiate it once per item**. Do **not** render the group with `array.map` over a data array.
 
-Define the component **in the same `index.tsx`**, alongside the `Page` components. Never split it into a sibling file like `Card.tsx` — a slide is always a single `index.tsx` plus its `assets/`.
+Define the component **in the same `index.tsx`**, alongside the `Page` components. Never split it into a sibling file like `Card.tsx` — a template is always a single `index.tsx` plus its `assets/`.
 
 ```tsx
 // ✅ Each card is its own JSX node — inspector edits one at a time.
@@ -326,12 +305,39 @@ The inspector edits source JSX in place. A `map` body is **one source location**
 
 The component definition stays the single source of truth for layout/styling (change it once → all cards update). Only the per-instance data — `src`, `label`, accent color — lives at the call site.
 
-This applies whenever the *visual element* repeats, not whenever the *data* does. Pure-text lists (`<ul><li>` bullets) are fine: each `<li>` is already its own JSX node, so plain literal markup is the correct shape — no need to wrap them in a component.
+This applies whenever the *visual element* repeats, not whenever the *data* does. Pure-text lists (`<ul><li>` bullets) are fine: each `<li>` is already its own JSX node, so plain literal markup is the correct shape — no need to wrap them in a component. Two-level bullets have their own rule below.
+
+### Bullets and sub-bullets
+
+Bulleted text follows the same rule. Every bullet and sub-bullet is its own JSX node — never one paragraph with line breaks, never a string array that gets `.map()`ped.
+
+- **Parent bullet** — a `<Bullet label="…" body="…">` component that draws the dot.
+- **Child bullet** — a `<SubBullet text="…" />` component nested inside its parent that draws the "-".
+- Write them as literal children at the call site. Each line then has its own source location, so the inspector can select and edit it alone instead of falling back to the nearest shared ancestor.
+- Pass the text as a **string prop** (`label`, `text`), not as JSX children. The inspector traces `{prop}` back to the call site; it can't do that for `{children}`.
+- Render the text in a **`<div style={{ display: 'inline-block' }}>`** holding only that prop — never a `<span>`. The inspector climbs past inline tags (`span`, `b`, `i`, …) to the nearest non-inline ancestor whose children are all inline text; with spans, a click on a sub-bullet resolves to the whole `<li>` and parent + children edit as one paragraph.
+- Use `<div>` for the row wrappers too. Never type the markers into the text (`"• foo"`, `"- bar"`); the components draw them.
+
+```tsx
+const SubBullet = ({ text }: { text: string }) => (
+  <div style={{ display: 'flex', gap: 4, paddingLeft: 9 }}>
+    <span aria-hidden="true">-</span>
+    <div style={{ display: 'inline-block' }}>{text}</div>
+  </div>
+);
+
+<Bullet label="Lead with the outcome — what changed, by how much, for whom">
+  <SubBullet text="Back it with the mechanism: what you actually did to get there." />
+  <SubBullet text="A second supporting detail, if it earns its place." />
+</Bullet>
+```
+
+Plain `<ul><li>` markup with literal `<li>` children is also fine when you don't need the two-level dot/dash style.
 
 ## Runtime behavior you get for free
 
 - Home page lists every folder under `slides/`.
-- Clicking a slide shows a left thumbnail rail, main page, prev/next, page counter.
+- Clicking a template shows a left thumbnail rail, main page, prev/next, page counter.
 - Arrow keys / PageUp / PageDown navigate. `F` enters fullscreen play mode.
 - In play mode: Space/→ next, ← prev, Esc exit.
 - Hot reload: edit `index.tsx` and the browser updates live.
@@ -341,10 +347,10 @@ This applies whenever the *visual element* repeats, not whenever the *data* does
 - [ ] `slides/<id>/index.tsx` `export default`s a non-empty `Page[]`.
 - [ ] Every page's root fills `100% × 100%`.
 - [ ] Content lives inside padding (no text kisses the edge).
-- [ ] **For every page, sum (font_size × line_height × lines) + gaps + 2×padding ≤ 1080px.** If close, split the page. No `overflow: auto` escape hatches.
+- [ ] **For every page, sum (font_size × line_height × lines) + gaps + 2×padding ≤ 1123px.** If close, split the page. No `overflow: auto` escape hatches.
 - [ ] No bullet wraps to a second line at the chosen font size.
 - [ ] One coherent visual direction across every page (palette + type scale).
-- [ ] Slide declares a top-level `export const design: DesignSystem = { … }` and references the values via `var(--osd-X)` (use `design.X` only when you need a JS number for arithmetic). Only omit the `design` const for a one-off slide whose palette is intentionally locked.
+- [ ] Template declares a top-level `export const design: DesignSystem = { … }` and references the values via `var(--osd-X)` (use `design.X` only when you need a JS number for arithmetic). Only omit the `design` const for a one-off template whose palette is intentionally locked.
 - [ ] One idea per page.
 - [ ] Visually repeated elements (cards, tiles, logo rows) are rendered as explicit `<Component />` instances, not via `array.map` over a data list.
 - [ ] All imported assets exist on disk — slide-local under `slides/<id>/assets/`, or global under `assets/` (imported via `@assets/...`).
@@ -352,14 +358,13 @@ This applies whenever the *visual element* repeats, not whenever the *data* does
 - [ ] If a page uses `<Steps>`/`<Step>`, every `<Step>` is a direct child of a `<Steps>`, and the page still reads as complete when jumped to via the overview grid (entering forward builds up; jumping in shows it fully revealed).
 - [ ] If a `SlideTransition` is declared, every page sits in one family — same duration band (200–280 ms), same easing pair, same hold-then-fade-in shape (no enter delay, no `throughBackground` outside a deliberate section break), magnitude under 12 px / 3%. No six-different-vocabularies decks. When in doubt, omit transitions entirely. (Pages that opt into `morph` may exceed the band to match the morph — see `references/morph.md`.)
 - [ ] If a transition opts into `morph`: every morph `id` is unique per page and stable across the pair, morph geometry is pixel-constant (never measured after mount), no `transform` sits on the morph node, and entrance animations are gated behind `useIsActivePage()`.
-- [ ] If the user asked for a speech script / speaker notes, it lives in `export const notes` (index-aligned with the page array) — not in a markdown or text file.
 - [ ] Nothing outside `slides/<id>/` was edited.
 
 ## Anti-patterns
 
 - ❌ Walls of text. If a page has more than ~40 words, split it.
 - ❌ Using the full canvas for body copy. Respect 100–160px padding.
-- ❌ Overflowing 1080px vertically. Cropped content is invisible — split the page.
+- ❌ Overflowing 1123px vertically. Cropped content is invisible — split the page.
 - ❌ `overflow: auto` / `overflow: scroll` / `overflow: hidden` to "hide" too much content. The canvas doesn't scroll; you've just hidden the bug.
 - ❌ Shrinking type below the scale's lower bound, or padding below 100px, to cram more in. Split instead.
 - ❌ Bullets that wrap to a second line — either shorten or move to its own page.
@@ -367,7 +372,6 @@ This applies whenever the *visual element* repeats, not whenever the *data* does
 - ❌ Inconsistent palette across pages.
 - ❌ Installing packages. Only `react`, `@open-slide/core`, and standard web APIs are available.
 - ❌ Writing CSS to a shared file. Inline styles or scoped classnames only.
-- ❌ Creating `README.md` or other prose files inside the slide folder.
-- ❌ Delivering a speech script as a markdown or text file. The runtime only surfaces the `notes` export — anything else never reaches the presenter view.
-- ❌ Editing `package.json`, `open-slide.config.ts`, or other slides.
+- ❌ Creating `README.md` or other prose files inside the template folder.
+- ❌ Editing `package.json`, `open-slide.config.ts`, or other templates.
 - ❌ Using a primitive without reading its reference file — each `references/*.md` carries the primitive's own anti-pattern list (placeholder misuse, transition vocabulary, `<Step>` nesting, morph geometry).

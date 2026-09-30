@@ -107,7 +107,6 @@ export type SceneNode = ShapeNode | PictureNode | TextNode;
 export type SlideScene = {
   background: Fill | null;
   nodes: SceneNode[];
-  notes: string | null;
 };
 
 export type DeckScene = {

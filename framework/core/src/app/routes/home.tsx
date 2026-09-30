@@ -36,7 +36,7 @@ import { FolderIconChip, SLIDE_DND_MIME, SystemViewIcon } from '../components/si
 import { ALL_SLIDES_ID, DRAFT_ID } from '../components/sidebar/sidebar';
 import { SlideCanvas } from '../components/slide-canvas';
 import { SlidePageProvider } from '../lib/page-context';
-import type { Folder, SlideModule } from '../lib/sdk';
+import { CANVAS_HEIGHT, CANVAS_WIDTH, type Folder, type SlideModule } from '../lib/sdk';
 import { loadSlide, slideCreatedAt, slideIds } from '../lib/slides';
 import type { HomeOutletContext } from './home-shell';
 
@@ -507,7 +507,7 @@ function SlideCard({
           className="block rounded-[6px] outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           {/* Slide thumb — tight border, grey baseboard, no shadcn rounded-xl */}
-          <div className="relative aspect-video overflow-hidden rounded-[6px] border border-hairline bg-card shadow-edge ring-1 ring-foreground/[0.04] group-hover:shadow-floating group-hover:ring-foreground/20 motion-safe:transition-[box-shadow,--tw-ring-color,scale] motion-safe:duration-200 group-active:scale-[0.99]">
+          <div style={{ aspectRatio: `${CANVAS_WIDTH} / ${CANVAS_HEIGHT}` }} className="relative overflow-hidden rounded-[6px] border border-hairline bg-card shadow-edge ring-1 ring-foreground/[0.04] group-hover:shadow-floating group-hover:ring-foreground/20 motion-safe:transition-[box-shadow,--tw-ring-color,scale] motion-safe:duration-200 group-active:scale-[0.99]">
             {FirstPage ? (
               <div className="h-full w-full">
                 <SlideCanvas flat freezeMotion design={slide?.design}>

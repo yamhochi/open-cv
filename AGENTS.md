@@ -6,7 +6,8 @@ This repo builds one thing: a resume, authored as an open-slide document under `
 
 - All content lives under `slides/resume/`. The entry is `slides/resume/index.tsx`.
 - Put resume-specific assets (headshot, etc.) under `slides/resume/assets/`.
-- Do **not** touch `package.json`, `open-slide.config.ts`, or add new top-level slides — this project is scoped to a single resume.
+- Do **not** touch `package.json`, `pnpm-workspace.yaml`, `open-slide.config.ts`, or add new top-level templates under `slides/` — this project is scoped to a single resume.
+- The framework is vendored in `framework/core/` (a fork of `@open-slide/core`: A4 794×1123 canvas, no speaker notes). Edit it only when the task is about the framework itself, never as part of resume work.
 - Do not add dependencies. Use only `react` and standard web APIs.
 
 ## Which skill to use
@@ -21,7 +22,7 @@ Keep this file short: hard rules only. All deeper guidance lives in the skills a
 
 ## Updating skills
 
-The skills above are managed by `@open-slide/core`, not committed here. Pull them with:
+The skills above live in `framework/core/skills/` (the vendored framework) and are copied into `.claude/skills` and `.agents/skills`, which are not committed. Refresh the copies with:
 
 ```
 pnpm install

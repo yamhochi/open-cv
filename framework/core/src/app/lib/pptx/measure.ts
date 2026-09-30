@@ -98,7 +98,6 @@ type Ctx = {
 
 export type MeasurePageOptions = {
   frame: HTMLElement;
-  notes: string | null;
   images: ImageStore;
   rasterizer: Rasterizer;
   color: ColorParser;
@@ -180,7 +179,7 @@ export async function measurePage(options: MeasurePageOptions): Promise<SlideSce
     background = first.fill;
     nodes.shift();
   }
-  return { background, nodes, notes: options.notes };
+  return { background, nodes };
 }
 
 function coversSlide(node: SceneNode): boolean {

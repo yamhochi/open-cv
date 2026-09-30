@@ -3,9 +3,9 @@ name: apply-comments
 description: Apply pending @slide-comment markers written by the open-slide inspector tool. Use when the user asks to "apply comments", "process slide comments", "apply the inspector comments", or references markers left inside `slides/<id>/index.tsx`.
 ---
 
-# Apply slide comments
+# Apply template comments
 
-The open-slide editor has an inspector tool that lets the user click on a rendered page element and attach a textual comment (e.g. *"make this red"*, *"change to 'Open Slide Rocks'"*). Each comment is persisted as an in-source JSX marker inside `slides/<slideId>/index.tsx`.
+The open-slide editor has an inspector tool that lets the user click on a rendered page element and attach a textual comment (e.g. *"make this red"*, *"change to 'Open Template Rocks'"*). Each comment is persisted as an in-source JSX marker inside `slides/<slideId>/index.tsx`.
 
 Your job: read those markers, perform the described edits, and delete the markers.
 
@@ -27,9 +27,9 @@ Your job: read those markers, perform the described edits, and delete the marker
 
 ## Procedure
 
-1. **Identify the target slide(s).**
+1. **Identify the target template(s).**
    - If the user names one (`getting-started`, `q2-roadmap`, etc.), work on that single `slides/<slideId>/index.tsx`.
-   - If they say "all" or don't specify, scan every `slides/*/index.tsx`. Process each slide one at a time.
+   - If they say "all" or don't specify, scan every `slides/*/index.tsx`. Process each template one at a time.
 
 2. **Read the file and find all markers.**
    - Run the regex above against the whole file.
@@ -55,7 +55,7 @@ Your job: read those markers, perform the described edits, and delete the marker
    - Confirm the edited JSX is well-formed (balanced tags, no dangling attributes). If the project's `package.json` has typecheck/lint scripts, run them with the project's package manager; scaffolded projects ship neither TypeScript nor a linter — there, rely on the running dev server (or the `build` script) to surface compile errors. Fix any errors you introduced.
 
 7. **Report.**
-   - Summarise: `N applied, M skipped` plus a one-line description of each change (including the slide id).
+   - Summarise: `N applied, M skipped` plus a one-line description of each change (including the template id).
 
 ## base64url decoding helper
 

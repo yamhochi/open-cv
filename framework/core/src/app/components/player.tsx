@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { hasModifier, isBackwardKey, isForwardKey, isTypingTarget } from '@/lib/keys';
+import { hasModifier, isTypingTarget } from '@/lib/keys';
 import { useClickPageNavigation } from '@/lib/use-click-page-navigation';
-import { useWheelPageNavigation } from '@/lib/use-wheel-page-navigation';
 import { cn } from '@/lib/utils';
 import type { DesignSystem } from '../lib/design';
 import type { Page } from '../lib/sdk';
@@ -185,15 +184,6 @@ export function Player({
     onViewportClick: controls && isMobile ? handleMobileViewportClick : undefined,
   });
 
-  useWheelPageNavigation({
-    ref: rootRef,
-    enabled: !overlayActive,
-    canPrev,
-    canNext,
-    onPrev: goPrev,
-    onNext: goNext,
-  });
-
   useTouchSwipe({
     ref: rootRef,
     enabled: controls && !overlayActive,
@@ -300,8 +290,10 @@ export function Player({
         return;
       }
 
-      const isNext = isForwardKey(e);
-      const isPrev = isBackwardKey(e);
+      // The page renders at 100% and scrolls, so only left/right turn pages; up/down,
+      // space and page up/down are left to scroll natively.
+      const isNext = e.key === 'ArrowRight';
+      const isPrev = e.key === 'ArrowLeft';
 
       if (isNext || isPrev) {
         if (controls && blackout) setBlackout(null);
@@ -404,7 +396,7 @@ export function Player({
       )}
       style={design ? { background: design.palette.bg } : undefined}
     >
-      <SlideCanvas flat design={design}>
+      <SlideCanvas flat fit="actual" scrollKey={index} design={design}>
         {/* Keyed per deck so a presenter-driven deck switch cuts instead of
             animating a transition between two unrelated decks. */}
         <SlideTransitionLayer

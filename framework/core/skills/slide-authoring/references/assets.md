@@ -2,7 +2,7 @@
 
 ## Slide-local assets
 
-**Slide-local assets** live under `slides/<id>/assets/` — anything one-off to a single slide. Import them as ES modules:
+**Slide-local assets** live under `slides/<id>/assets/` — anything one-off to a single template. Import them as ES modules:
 
 ```tsx
 import hero from './assets/hero.jpg';
@@ -24,9 +24,9 @@ const videoUrl = new URL('./assets/intro.mp4', import.meta.url).href;
 import logo from '@assets/logos/acme.svg';
 ```
 
-A `themes/*.md` file may name an asset path in its prose (e.g. "use `@assets/logos/acme.svg` in the title slot"); the slide imports it explicitly.
+A `themes/*.md` file may name an asset path in its prose (e.g. "use `@assets/logos/acme.svg` in the title slot"); the template imports it explicitly.
 
-For a pure-text slide, don't create `slides/<id>/assets/` at all.
+For a pure-text template, don't create `slides/<id>/assets/` at all.
 
 ## Image placeholders (`<ImagePlaceholder>`)
 
@@ -42,7 +42,7 @@ The user uploads the real file via the Assets panel, then clicks the placeholder
 
 **Use a placeholder only when** a specific concrete image is required by the deck's topic. Examples that warrant one: a product-intro deck (product screenshot per feature), an offsite recap (team photo), a case study (customer logo, dashboard screenshot).
 
-**Do not use a placeholder** for decoration, generic "stock photo" filler, hero imagery on a text-heavy slide, or anywhere a typographic / iconographic / illustrative solution would do. If you can carry the page with type, layout, and color — do that. Empty placeholders the user has to fill are friction; only spend that friction when the alternative is worse.
+**Do not use a placeholder** for decoration, generic "stock photo" filler, hero imagery on a text-heavy template, or anywhere a typographic / iconographic / illustrative solution would do. If you can carry the page with type, layout, and color — do that. Empty placeholders the user has to fill are friction; only spend that friction when the alternative is worse.
 
 Size the placeholder to the slot it occupies. Pass `width`/`height` when the layout has a fixed image box; omit them when the placeholder fills a flex/grid cell. The `hint` should describe the *content* the user needs ("Q3 revenue chart") not the *role* ("hero image").
 
