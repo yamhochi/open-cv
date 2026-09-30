@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="32" height="32" shape-rendering="crispEdges">
+  <!-- Document Outline & Body -->
+  <path fill="#1E2022" d="M3 1h8v1h1v1h1v11h-1v1H3v-1H2V2h1V1z"/>
+  <path fill="#FFFFFF" d="M3 2h7v2h2v9H3V2z"/>
+
+  <!-- Text / Code Lines inside Document -->
+  <path fill="#1E2022" d="M4 4h5v1H4V4zm0 2h5v1H4V6zm0 2h3v1H4V8z"/>
+
+  <!-- Pen / Editor Nib Accent (Neon Pink / Cyan for contrast) -->
+  <path fill="#FF007F" d="M10 9h3v1h-3V9zm1 1h3v1h-3v-1zm1 1h3v1h-3v-1z"/>
+  <path fill="#00E5FF" d="M13 12h2v1h-2v-1zm1 1h1v1h-1v-1z"/>
+</svg>
