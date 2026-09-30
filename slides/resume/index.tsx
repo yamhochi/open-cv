@@ -410,52 +410,8 @@ const ResumePageTwo: Page = () => (
   </div>
 );
 
-const CoverLetter: Page = () => (
-  <div style={page}>
-    <div style={{ ...content, gap: 18 }}>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'baseline',
-          paddingBottom: 14,
-        }}
-      >
-        <span style={{ fontSize: 14, fontWeight: 500, letterSpacing: '-0.01em' }}>Your Name</span>
-        <ContactMeta align="right" />
-      </div>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <p style={{ fontSize: 12, lineHeight: 1.6, color: 'var(--osd-text)', margin: 0 }}>
-          Dear Hiring Manager,
-        </p>
-        <p style={{ fontSize: 12, lineHeight: 1.6, color: muted, margin: 0 }}>
-          Open with why you're writing and what drew you to this role specifically — not a
-          generic opener, something that shows you read the posting.
-        </p>
-        <p style={{ fontSize: 12, lineHeight: 1.6, color: muted, margin: 0 }}>
-          Make your case: one or two concrete examples from your background that map directly
-          onto what this role needs, stated as outcomes rather than a list of duties.
-        </p>
-        <p style={{ fontSize: 12, lineHeight: 1.6, color: muted, margin: 0 }}>
-          Close with why this company in particular, and what you'd want to be true in the
-          first few months if you got the role.
-        </p>
-        <div style={{ marginTop: 4 }}>
-          <p style={{ fontSize: 12, lineHeight: 1.6, color: 'var(--osd-text)', margin: 0 }}>
-            Yours sincerely
-          </p>
-          <p style={{ fontSize: 12, lineHeight: 1.6, color: 'var(--osd-text)', margin: 0 }}>
-            Your Name
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
 export const meta: SlideMeta = {
   title: 'Resume template',
 };
 
-export default [ResumePageOne, ResumePageTwo, CoverLetter] satisfies Page[];
+export default [ResumePageOne, ResumePageTwo] satisfies Page[];
