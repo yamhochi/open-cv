@@ -326,7 +326,7 @@ const ResumePageOne: Page = () => (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             <Entry date="Jan 2023 – Present" company="Company Name" roleTitle="Your Role Title">
               <Bullet label="Lead with the outcome — what changed, by how much, for whom">
-                <SubBullet text="First supportintg detail, outcomes first" />
+                <SubBullet text="First supporting detail, outcomes first" />
                 <SubBullet text="A second supporting detail, if it earns its place." />
               </Bullet>
               <Bullet label="A second result-led bullet, specific and measurable">
@@ -409,7 +409,8 @@ const ResumePageTwo: Page = () => (
 );
 
 export const meta: SlideMeta = {
-  title: 'Resume template',
+  title: 'Resume template 1',
+  theme: 'lars',
 };
 
 export default [ResumePageOne, ResumePageTwo] satisfies Page[];
