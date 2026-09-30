@@ -4,3 +4,4 @@ dist
 .agents/skills
 .claude/skills
 SESSION_NOTES.md
+!framework/core/dist
