@@ -691,29 +691,6 @@ export function Slide() {
                   </span>
                 </button>
               )}
-              {view === 'slides' && allowHtmlDownload && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger
-                    type="button"
-                    disabled={exporting}
-                    aria-label={t.slide.download}
-                    title={t.slide.download}
-                    className={cn(
-                      buttonVariants({ variant: 'ghost', size: 'icon-sm' }),
-                      'hidden md:inline-flex',
-                    )}
-                  >
-                    {exporting ? (
-                      <Loader2 className="size-4 animate-spin motion-reduce:animate-none" />
-                    ) : (
-                      <Download className="size-4" />
-                    )}
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="min-w-[200px]">
-                    {exportMenuItems}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
               {view === 'slides' && (
                 <DropdownMenu>
                   <DropdownMenuTrigger
@@ -751,6 +728,41 @@ export function Slide() {
               )}
               {view === 'slides' && <InspectPanelButton />}
               <span aria-hidden className="mx-0.5 hidden h-5 w-px bg-hairline md:block" />
+              {view === 'slides' && allowHtmlDownload && (
+                <div className="mr-1.5 hidden items-stretch md:inline-flex">
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    disabled={exporting}
+                    onClick={exportPdf}
+                    className="rounded-r-none bg-card px-3 text-foreground shadow-[0_0_0_0.5px_var(--tw-shadow-color,oklch(0_0_0/0.02)),0_1px_2px_var(--tw-shadow-color,oklch(0_0_0/0.02)),0_2px_4px_var(--tw-shadow-color,oklch(0_0_0/0.02))] hover:bg-muted active:bg-muted"
+                  >
+                    {exporting ? (
+                      <Loader2 className="size-3.5 animate-spin motion-reduce:animate-none" />
+                    ) : (
+                      <Download className="size-3.5" />
+                    )}
+                    {t.slide.download}
+                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger
+                      type="button"
+                      disabled={exporting}
+                      aria-label={t.slide.download}
+                      title={t.slide.download}
+                      className={cn(
+                        buttonVariants({ variant: 'secondary', size: 'sm' }),
+                        'rounded-l-none bg-card px-1.5 text-foreground shadow-[inset_1px_0_0_oklch(0_0_0/0.07),0_0_0_0.5px_var(--tw-shadow-color,oklch(0_0_0/0.02)),0_1px_2px_var(--tw-shadow-color,oklch(0_0_0/0.02)),0_2px_4px_var(--tw-shadow-color,oklch(0_0_0/0.02))] hover:bg-muted aria-expanded:bg-muted',
+                      )}
+                    >
+                      <ChevronDown className="size-3.5" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="min-w-[200px]">
+                      {exportMenuItems}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              )}
               {view === 'slides' && (
                 <div className="inline-flex items-stretch">
                   <Button
