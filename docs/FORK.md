@@ -8,6 +8,7 @@ resume-builder runs on a local fork of [open-slide](https://github.com/open-slid
 - **Present mode at 100%.** The page is shown at its real size (794px wide), centered, and scrolls when it is taller than the window. Left/right arrows change pages. Up/down, space and page up/down scroll. Mouse-wheel page turning is off.
 - **Speaker notes removed.** The notes drawer, the presenter-view notes panel, the `notes` export, the notes editing endpoint and PPTX notes are gone. The presenter view (current page, next page, timer) remains.
 - **Renamed interface.** "Slide" is "template" in the UI, and the app is called resume-builder.
+- **Download button.** The editor toolbar has a labelled "Download" split button next to Present, built the same way. The main button exports a PDF and the chevron opens the full export menu (HTML, PDF, PPTX). It replaces the small icon button that used to sit in the middle of the toolbar.
 - **New icon.** The sidebar logo and favicon are the pixel-art document icon (`framework/core/src/app/assets/logo.svg`, `favicon.svg`, and a 32×32 `favicon.ico` fallback) instead of the open-slide logo.
 - **No in-app update.** The button that ran `pnpm up @open-slide/core` is removed, because it would replace this fork with the published package.
 - **Rewritten authoring skills.** The coding-agent skills in `framework/core/skills/` describe a document-sized page (type scale, spacing, vertical budget) instead of a presentation slide, and document the `<Bullet>` / `<SubBullet text="…" />` convention that keeps every line separately editable.
