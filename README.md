@@ -71,11 +71,33 @@ This is a fork of `@open-slide/core` 2.0.1. Changes so far:
 - **UI renamed:** "slide" is now "template", and the app title is "resume-builder".
 - **Authoring skills rewritten** for a document-sized page.
 
-`framework/core/dist/` was patched by hand and there is no build step for it here. If you change `framework/core/src/`, check whether the built files need the same change.
+There is no build step for `framework/core/dist/` here. Its edits are applied by `scripts/patch-framework-dist.mjs`. If you change `framework/core/src/` in a way that affects the built files, mirror it in that script.
 
 ## Updating from upstream
 
-Don't run `pnpm up @open-slide/core`. It would replace the local fork with the npm package and undo the changes above. To take a newer upstream version, diff it against `framework/core/` and port the changes over by hand.
+Don't run `pnpm up @open-slide/core`. It would replace the local fork with the npm package and undo the changes above. The unmodified 2.0.1 copy is committed and tagged `upstream-2.0.1`, so git can merge a newer release against it:
+
+```bash
+# 1. Put the new upstream release on its own branch, starting from the baseline
+git switch -c upstream-X.Y.Z upstream-2.0.1
+npm pack @open-slide/core@X.Y.Z && tar -xzf open-slide-core-X.Y.Z.tgz
+rsync -a --delete --exclude node_modules package/ framework/core/
+git add -A && git commit -m "Vendor @open-slide/core X.Y.Z unmodified" && git tag upstream-X.Y.Z
+rm -rf package open-slide-core-X.Y.Z.tgz
+
+# 2. Merge it into your branch, then re-apply the changes to the built files
+git switch master
+git merge upstream-X.Y.Z          # resolve conflicts in framework/core/src and skills/
+git checkout upstream-X.Y.Z -- framework/core/dist
+node scripts/patch-framework-dist.mjs
+
+# 3. Reinstall and check
+pnpm install && pnpm sync:skills && pnpm dev
+```
+
+`framework/core/dist/` is compiled output with hashed file names, so git can't merge it. Step 2 takes the new upstream `dist` and `scripts/patch-framework-dist.mjs` re-applies the fork's edits: A4 canvas, no speaker notes, disabled update button, and the "template" wording. The script fails loudly if upstream changed something it relies on. If it does, fix the script and re-run it on a fresh copy.
+
+The `src/` changes (thumbnails, present mode, PPTX units, the removed notes UI) come through the git merge. Check them in the merge diff.
 
 ## License
 
