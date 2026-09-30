@@ -1,0 +1,292 @@
+import { Palette, Shuffle, X } from 'lucide-react';
+import { ColorField, Field, NumberField, Section } from '@/components/panel/panel-fields';
+import { PanelShell } from '@/components/panel/panel-shell';
+import { useLocale } from '@/lib/use-locale';
+import { cn } from '@/lib/utils';
+import { Button } from '../ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Slider } from '../ui/slider';
+import { useDesignPanelState } from './design-provider';
+
+const FONT_PRESETS: Array<{ label: string; value: string }> = [
+  {
+    label: 'System sans',
+    value: '-apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif',
+  },
+  { label: 'Inter', value: '"Inter", system-ui, sans-serif' },
+  { label: 'Helvetica', value: '"Helvetica Neue", Helvetica, Arial, sans-serif' },
+  { label: 'Georgia', value: 'Georgia, "Times New Roman", serif' },
+  { label: 'Times', value: '"Times New Roman", Times, serif' },
+  { label: 'SF Mono', value: '"SF Mono", "JetBrains Mono", Menlo, monospace' },
+];
+
+type DesignPanelProps = {
+  onClose: () => void;
+};
+
+export function DesignPanel({ onClose }: DesignPanelProps) {
+  const { draft, exists, warning, loaded, dirty, update, shuffle } = useDesignPanelState();
+  const ready = loaded && draft != null;
+  const t = useLocale();
+
+  if (!ready) return null;
+
+  return (
+    <PanelShell
+      uiAttr="design"
+      header={
+        <>
+          <div className="flex min-w-0 items-center gap-2">
+            <Palette className="size-3.5 text-muted-foreground" />
+            <span className="font-heading text-[12px] font-semibold tracking-tight">
+              {t.stylePanel.designTokens}
+            </span>
+            {!exists && (
+              <span className="rounded-[3px] border border-hairline bg-muted/60 px-1.5 py-px font-mono text-[9.5px] uppercase tracking-[0.08em] text-muted-foreground">
+                {t.stylePanel.draftBadge}
+              </span>
+            )}
+            <span
+              className={cn(
+                'size-1.5 rounded-full bg-brand transition-opacity duration-150',
+                dirty ? 'opacity-100' : 'opacity-0',
+              )}
+              title={dirty ? t.stylePanel.unsavedTitle : undefined}
+              aria-hidden
+            />
+          </div>
+          <div className="flex items-center gap-0.5">
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              className="text-muted-foreground hover:text-foreground"
+              onClick={shuffle}
+              aria-label={t.stylePanel.shuffleAria}
+              title={t.stylePanel.shuffleTitle}
+            >
+              <Shuffle className="size-3.5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              className="text-muted-foreground hover:text-foreground"
+              onClick={onClose}
+              aria-label={t.stylePanel.closePanelAria}
+            >
+              <X className="size-3.5" />
+            </Button>
+          </div>
+        </>
+      }
+      banner={
+        warning && (
+          <div className="flex gap-2 border-b border-hairline bg-amber-500/10 px-3 py-2 text-[11px] leading-relaxed text-amber-800 dark:bg-amber-400/10 dark:text-amber-200">
+            <span aria-hidden className="mt-0.5 size-1.5 shrink-0 rounded-full bg-amber-500" />
+            <span>{warning}</span>
+          </div>
+        )
+      }
+    >
+      <Section title={t.stylePanel.colorsSection}>
+        <ColorField
+          label={t.stylePanel.backgroundLabel}
+          value={draft.palette.bg}
+          onChange={(v) =>
+            update((d) => {
+              d.palette.bg = v;
+            }, 'design:palette.bg')
+          }
+        />
+        <ColorField
+          label={t.stylePanel.textLabel}
+          value={draft.palette.text}
+          onChange={(v) =>
+            update((d) => {
+              d.palette.text = v;
+            }, 'design:palette.text')
+          }
+        />
+        <ColorField
+          label={t.stylePanel.accentLabel}
+          value={draft.palette.accent}
+          onChange={(v) =>
+            update((d) => {
+              d.palette.accent = v;
+            }, 'design:palette.accent')
+          }
+        />
+      </Section>
+
+      <Section title={t.stylePanel.typographySection}>
+        <FontField
+          label={t.stylePanel.displayFontLabel}
+          value={draft.fonts.display}
+          onChange={(v) =>
+            update((d) => {
+              d.fonts.display = v;
+            }, 'design:fonts.display')
+          }
+        />
+        <FontField
+          label={t.stylePanel.bodyFontLabel}
+          value={draft.fonts.body}
+          onChange={(v) =>
+            update((d) => {
+              d.fonts.body = v;
+            }, 'design:fonts.body')
+          }
+        />
+        <SliderField
+          label={t.stylePanel.heroLabel}
+          value={draft.typeScale.hero}
+          min={48}
+          max={240}
+          step={2}
+          suffix="px"
+          onChange={(n) =>
+            update((d) => {
+              d.typeScale.hero = n;
+            }, 'design:typeScale.hero')
+          }
+        />
+        <SliderField
+          label={t.stylePanel.bodyLabel}
+          value={draft.typeScale.body}
+          min={16}
+          max={72}
+          step={1}
+          suffix="px"
+          onChange={(n) =>
+            update((d) => {
+              d.typeScale.body = n;
+            }, 'design:typeScale.body')
+          }
+        />
+      </Section>
+
+      <Section title={t.stylePanel.shapeSection}>
+        <SliderField
+          label={t.stylePanel.radiusLabel}
+          value={draft.radius}
+          min={0}
+          max={80}
+          step={1}
+          suffix="px"
+          onChange={(n) =>
+            update((d) => {
+              d.radius = n;
+            }, 'design:radius')
+          }
+        />
+      </Section>
+    </PanelShell>
+  );
+}
+
+export function DesignToggleButton({
+  active,
+  onToggle,
+}: {
+  active: boolean;
+  onToggle: () => void;
+}) {
+  const t = useLocale();
+  if (import.meta.env.PROD) return null;
+  return (
+    <Button
+      size="sm"
+      variant={active ? 'default' : 'ghost'}
+      onClick={onToggle}
+      data-design-ui
+      title={t.stylePanel.designToggleTitle}
+    >
+      <Palette className="size-3.5" />
+      <span className="hidden md:inline">{t.stylePanel.designToggle}</span>
+      <kbd className="ml-1 hidden rounded-[3px] bg-foreground/10 px-1 font-mono text-[9.5px] tracking-[0.04em] md:inline">
+        D
+      </kbd>
+    </Button>
+  );
+}
+
+function FontField({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const matched = FONT_PRESETS.find((p) => p.value === value);
+  const tFont = useLocale();
+  return (
+    <Field label={label}>
+      <Select
+        items={{
+          ...Object.fromEntries(FONT_PRESETS.map((p) => [p.value, p.label])),
+          __custom__: tFont.stylePanel.fontPresetCustom,
+        }}
+        value={matched ? matched.value : '__custom__'}
+        onValueChange={(v) => {
+          if (typeof v === 'string' && v !== '__custom__') onChange(v);
+        }}
+      >
+        <SelectTrigger size="sm" className="flex-1 text-xs">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {FONT_PRESETS.map((p) => (
+            <SelectItem key={p.label} value={p.value} className="text-xs">
+              {p.label}
+            </SelectItem>
+          ))}
+          {!matched && (
+            <SelectItem value="__custom__" className="text-xs">
+              {tFont.stylePanel.fontPresetCustom}
+            </SelectItem>
+          )}
+        </SelectContent>
+      </Select>
+    </Field>
+  );
+}
+
+function SliderField({
+  label,
+  value,
+  min,
+  max,
+  step = 1,
+  suffix,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step?: number;
+  suffix?: string;
+  onChange: (n: number) => void;
+}) {
+  return (
+    <Field label={label}>
+      <Slider
+        min={min}
+        max={max}
+        step={step}
+        value={[value]}
+        onValueChange={(next) => onChange((Array.isArray(next) ? next[0] : next) ?? value)}
+        className="flex-1"
+      />
+      <NumberField
+        value={value}
+        onChange={onChange}
+        min={min}
+        max={max}
+        step={step}
+        suffix={suffix}
+      />
+    </Field>
+  );
+}
