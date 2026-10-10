@@ -14,6 +14,7 @@ This repo builds one thing: a resume, authored as an open-slide document under `
 
 - **Building or rewriting the resume** — use the `create-slide` skill. It has a dedicated "document" flow for resumes: it asks for your source material (an existing resume, PDF, or notes) rather than inventing content, and sizes the page to what you actually have.
 - **Applying inspector comments** (`@slide-comment` markers) — use the `apply-comments` skill.
+- **Tailoring the resume to a role** (brief, then Markdown, then slide, with sync both ways and the Word export) — use the `resume-from-brief` skill.
 - **Picking or adapting a visual style** — use the `create-theme` skill if you want to extract a reusable theme; otherwise `create-slide` handles one-off styling.
 - **Resolving "this page" / "this element"** — use the `current-slide` skill.
 - **Any other edit** inside `slides/resume/` — read the `slide-authoring` skill first. It's the technical reference: file contract, canvas size, type scale, palette, layout, assets, self-review checklist.

@@ -25,7 +25,11 @@ Open the address `pnpm dev` prints (usually <http://localhost:5173>) and open th
 - **By hand.** Edit `slides/resume/index.tsx`. Changes appear instantly. You can also double-click text in the editor to change it in place.
 - **With a coding agent.** Open the project in Claude Code (or another agent) and ask it to "build my resume". Point it at an existing resume, PDF or notes. It asks for your source material rather than inventing content.
 
-Then export from the download button in the editor toolbar. PDF export needs a Chromium-based browser.
+When it's ready, export from the Download button in the editor toolbar. PDF export needs a Chromium-based browser.
+
+To tailor the resume to a role, write a brief (start from `docs/resume-briefs/example.md`), then ask your agent to use the `resume-from-brief` skill. It writes the words into `docs/resumes/<id>.md`, syncs them into the slide, and keeps the two matching. Edits you make on the slide can be pulled back into the Markdown with `node scripts/resume/slide-to-md.mjs <id> --write`.
+
+For a Word file, run `pnpm export:docx <slide-id>`. It builds the `.docx` from the Markdown, and the files are git-ignored.
 
 ## Scripts
 

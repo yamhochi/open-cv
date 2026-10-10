@@ -1,0 +1,9 @@
+{
+  "name": "resume-tools",
+  "private": true,
+  "type": "module",
+  "description": "Markdown to slide checks and the Word export for resume slides.",
+  "dependencies": {
+    "docx": "9.5.0"
+  }
+}

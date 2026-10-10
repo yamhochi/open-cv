@@ -5,3 +5,4 @@ dist
 .claude/skills
 SESSION_NOTES.md
 !framework/core/dist
+docs/resumes/*.docx

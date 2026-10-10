@@ -7,7 +7,9 @@
     "dev": "open-slide dev",
     "build": "open-slide build",
     "preview": "open-slide preview",
-    "sync:skills": "open-slide sync:skills"
+    "sync:skills": "open-slide sync:skills",
+    "resume:md": "node scripts/resume/slide-to-md.mjs",
+    "export:docx": "node scripts/resume/md-to-docx.mjs"
   },
   "dependencies": {
     "@open-slide/core": "workspace:*",
