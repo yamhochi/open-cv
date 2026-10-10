@@ -1,12 +1,12 @@
 # resume-builder — Agent Guide
 
-This repo builds one thing: a resume, authored as an open-slide document under `slides/resume/`.
+This repo builds a resume and its cover letter, authored as open-slide documents under `slides/resume/` and `slides/cover-letter/`. A tailored version of either is a copy of its folder under a new id (see the `resume-from-brief` skill).
 
 ## Hard rules
 
-- All content lives under `slides/resume/`. The entry is `slides/resume/index.tsx`.
-- Put resume-specific assets (headshot, etc.) under `slides/resume/assets/`.
-- Do **not** touch `package.json`, `pnpm-workspace.yaml`, `open-slide.config.ts`, or add new top-level templates under `slides/` — this project is scoped to a single resume.
+- All content lives in `slides/<id>/` folders. The entries are `slides/resume/index.tsx` and `slides/cover-letter/index.tsx`.
+- Put a document's assets (headshot, etc.) under its own `slides/<id>/assets/`.
+- Do **not** touch `package.json`, `pnpm-workspace.yaml`, `open-slide.config.ts`, or add templates under `slides/` other than a new resume or cover letter.
 - The framework is vendored in `framework/core/` (a fork of `@open-slide/core`: A4 794×1123 canvas, no speaker notes). Edit it only when the task is about the framework itself, never as part of resume work.
 - Do not add dependencies. Use only `react` and standard web APIs.
 

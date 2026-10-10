@@ -22,7 +22,7 @@ Open the address `pnpm dev` prints (usually <http://localhost:5173>) and open th
 
 ## Make it yours
 
-- **By hand.** Edit `slides/resume/index.tsx`. Changes appear instantly. You can also double-click text in the editor to change it in place.
+- **By hand.** Edit `slides/resume/index.tsx`, or `slides/cover-letter/index.tsx` for the cover letter. Changes appear instantly. You can also double-click text in the editor to change it in place.
 - **With a coding agent.** Open the project in Claude Code (or another agent) and ask it to "build my resume". Point it at an existing resume, PDF or notes. It asks for your source material rather than inventing content.
 
 When it's ready, export from the Download button in the editor toolbar. PDF export needs a Chromium-based browser.

@@ -34,7 +34,7 @@ Technical or domain-specific detail that a reader in this field would recognize 
   - A second supporting detail, if it earns its place.
 - **A second result-led bullet, specific and measurable**
   - How you got there, in one clear line.
-- **A third bullet worth calling out with emphasis**
+- **A third bullet, with sub-bullets under it**
   - Supporting detail one.
   - Supporting detail two.
 
@@ -46,14 +46,21 @@ Technical or domain-specific detail that a reader in this field would recognize 
 
 ### Earlier Company · Earlier Role
 *Mar 2018 – May 2020*
+An optional one-line summary of the role, shown above its bullets.
 - **A one-line result**: A longer description when the bullet reads better as a single sentence than as label plus sub-bullets.
-- **A second one-line result**: Same pattern — use this shape for roles where the detail doesn't need to be broken out further.
+- **A second one-line result.** Use a full stop after the lead when it is the first sentence of a longer bullet.
 
 ## Past experience
 
 ### Various organizations · Earlier job titles
 *2014 – 2018*
 - A brief note on earlier work, kept short since it's less relevant now
+
+## Selected work
+
+**Projects and writing**
+- [A project name](https://example.com/project)
+- [An article or case study](https://example.com/article)
 
 ## Talks & achievements
 

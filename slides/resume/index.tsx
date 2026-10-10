@@ -1,18 +1,26 @@
 import type { DesignSystem, Page, SlideMeta } from '@open-slide/core';
 import type { ReactNode } from 'react';
 
-const FONT_HREF =
-  'https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Geist+Mono:wght@400;500&display=swap';
+// One stylesheet per weight, not one variable-font request: a variable font prints to PDF as a
+// Type 3 font, which loses the spaces between words when the text is copied or parsed.
+const FONT_HREFS = [
+  'https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap',
+  'https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap',
+  'https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400&display=swap',
+];
 const FONT_LINK_ID = 'osd-webfont-resume-template';
 if (typeof document !== 'undefined') {
-  let link = document.getElementById(FONT_LINK_ID) as HTMLLinkElement | null;
-  if (!link) {
-    link = document.createElement('link');
-    link.id = FONT_LINK_ID;
-    link.rel = 'stylesheet';
-    document.head.appendChild(link);
-  }
-  if (link.href !== FONT_HREF) link.href = FONT_HREF;
+  FONT_HREFS.forEach((href, i) => {
+    const id = `${FONT_LINK_ID}-${i}`;
+    let link = document.getElementById(id) as HTMLLinkElement | null;
+    if (!link) {
+      link = document.createElement('link');
+      link.id = id;
+      link.rel = 'stylesheet';
+      document.head.appendChild(link);
+    }
+    if (link.href !== href) link.href = href;
+  });
 }
 
 export const design: DesignSystem = {
@@ -62,8 +70,9 @@ const content: React.CSSProperties = {
   gap: 24,
 };
 
-// Between named sections (Summary, Core Skills, Relevant Experience, Education, ...): 40px.
-const SECTION_GAP = 40;
+// Between named sections (Summary, Core Skills, Relevant Experience, Education, ...): 24px.
+// A deliberate step down from slide-authoring's 40px default, mirrored in the Word export.
+const SECTION_GAP = 24;
 const sections: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
@@ -144,7 +153,7 @@ const ContactMeta = ({
 );
 
 // Wraps name+role only when a role is actually rendered — no redundant container otherwise.
-const Header = ({ role }: { role?: string }) => {
+const Header = ({ headline }: { headline?: string }) => {
   const name = (
     <span
       style={{
@@ -162,10 +171,10 @@ const Header = ({ role }: { role?: string }) => {
     <div
       style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 16 }}
     >
-      {role ? (
+      {headline ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2, flexShrink: 0 }}>
           {name}
-          <span style={{ fontSize: 12, fontWeight: 500, color: muted }}>{role}</span>
+          <span style={{ fontSize: 12, fontWeight: 500, color: muted }}>{headline}</span>
         </div>
       ) : (
         name
@@ -178,7 +187,7 @@ const Header = ({ role }: { role?: string }) => {
 // Default single-column entry: date line -> Company · Role line -> bold-label bullets.
 // See slide-authoring's "Document layout patterns" for why (no rail, no separate paragraph).
 // Fixed spacing per that skill: 4px within an entry's own elements, line-height 1.5 for
-// bullets. Between-role gap (20px) and between-section gap (40px) are set by the caller.
+// bullets. Between-role gap (20px) and between-section gap (24px) are set by the caller.
 // Pagination rule: this whole component is atomic — never split across a page break.
 // Bullets/sub-bullets are literal <Bullet>/<SubBullet text="…" /> children, not a data array + map —
 // each line needs its own JSX node so the inspector can resolve and edit it individually
@@ -187,11 +196,13 @@ const Entry = ({
   date,
   company,
   roleTitle,
+  summary,
   children,
 }: {
   date: string;
   company: string;
   roleTitle: string;
+  summary?: string;
   children: ReactNode;
 }) => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -200,6 +211,9 @@ const Entry = ({
       <span style={{ fontWeight: 500 }}>{company}</span>
       <span style={{ fontWeight: 500 }}> · {roleTitle}</span>
     </div>
+    {summary ? (
+      <p style={{ fontSize: 12, lineHeight: 1.5, color: muted, margin: 0 }}>{summary}</p>
+    ) : null}
     <ul
       style={{
         margin: 0,
@@ -215,15 +229,18 @@ const Entry = ({
   </div>
 );
 
+// `label` is the lead; `body` is the regular-weight rest, joined by `separator` (": " by default,
+// ". " when the lead is the first sentence of a longer bullet). The label is medium weight only
+// when the bullet has a body or sub-bullets; a single-sentence bullet stays regular weight.
 const Bullet = ({
   label,
   body,
-  emphasis,
+  separator = ': ',
   children,
 }: {
   label: string;
   body?: string;
-  emphasis?: boolean;
+  separator?: string;
   children?: ReactNode;
 }) => (
   <li
@@ -247,9 +264,22 @@ const Bullet = ({
           background: muted,
         }}
       />
-      <div style={emphasis ? { fontWeight: 500 } : undefined}>
-        <div style={{ display: 'inline-block', color: muted, fontWeight: 500 }}>{label}</div>
-        {body ? <>: {body}</> : null}
+      <div>
+        <div
+          style={{
+            display: 'inline-block',
+            color: muted,
+            fontWeight: body || children ? 500 : 400,
+          }}
+        >
+          {label}
+        </div>
+        {body ? (
+          <>
+            {separator}
+            {body}
+          </>
+        ) : null}
       </div>
     </div>
     {children}
@@ -261,10 +291,62 @@ const Bullet = ({
 // non-inline ancestor, so a <span> here would let the click resolve to the whole <li> and
 // edit parent + sub-bullets as one paragraph. A <div> stops the climb at exactly this line, and
 // its source resolves to this call site's `label` / `text` prop.
-const SubBullet = ({ text }: { text: string }) => (
-  <div style={{ display: 'flex', gap: 4, paddingLeft: 9 }}>
-    <span aria-hidden="true">-</span>
-    <div style={{ display: 'inline-block' }}>{text}</div>
+// A sub-bullet carries a `text` prop, or children when it holds a <LinkText>. Its marker is an
+// outlined ring centred on the parent's dot, and its text starts level with the parent's text.
+const SubBullet = ({ text, children }: { text?: string; children?: ReactNode }) => (
+  <div style={{ display: 'flex', gap: 6 }}>
+    <span
+      aria-hidden="true"
+      style={{
+        flexShrink: 0,
+        marginTop: 6.5,
+        marginLeft: -0.5,
+        marginRight: -0.5,
+        boxSizing: 'border-box',
+        width: 4,
+        height: 4,
+        borderRadius: '50%',
+        border: '1px solid #DEDCD7',
+      }}
+    />
+    <div style={{ display: 'inline-block' }}>
+      {text}
+      {children}
+    </div>
+  </div>
+);
+
+// A link renders as its label only, in blue with a thin underline; the address stays behind it.
+const LinkText = ({ label, href }: { label: string; href: string }) => (
+  <a
+    href={href}
+    target="_blank"
+    rel="noreferrer"
+    style={{
+      color: '#1D4ED8',
+      textDecoration: 'underline',
+      textDecorationColor: '#A5B8F0',
+      textUnderlineOffset: 2,
+    }}
+  >
+    <span style={{ display: 'inline-block' }}>{label}</span>
+    <svg
+      aria-hidden="true"
+      width="8"
+      height="8"
+      viewBox="0 0 8 8"
+      style={{ display: 'inline-block', marginLeft: 3, marginTop: 4, verticalAlign: 'top' }}
+    >
+      <path d="M1 7 L7 1 M2.5 1 H7 V5.5" stroke="currentColor" strokeWidth="1" fill="none" />
+    </svg>
+  </a>
+);
+
+// A skills-style cell holding a list: a title, then SubBullet items (plain text or LinkText).
+const BulletCell = ({ title, children }: { title: string; children: ReactNode }) => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+    <span style={{ fontSize: 12, fontWeight: 500 }}>{title}</span>
+    <div style={{ fontSize: 12, lineHeight: 1.4, color: muted }}>{children}</div>
   </div>
 );
 
@@ -332,10 +414,7 @@ const ResumePageOne: Page = () => (
               <Bullet label="A second result-led bullet, specific and measurable">
                 <SubBullet text="How you got there, in one clear line." />
               </Bullet>
-              <Bullet
-                label="A third bullet worth calling out with emphasis"
-                emphasis
-              >
+              <Bullet label="A third bullet, with sub-bullets under it">
                 <SubBullet text="Supporting detail one." />
                 <SubBullet text="Supporting detail two." />
               </Bullet>
@@ -362,14 +441,20 @@ const ResumePageTwo: Page = () => (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           <SectionTitle>Relevant experience (continued)</SectionTitle>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            <Entry date="Mar 2018 – May 2020" company="Earlier Company" roleTitle="Earlier Role">
+            <Entry
+              date="Mar 2018 – May 2020"
+              company="Earlier Company"
+              roleTitle="Earlier Role"
+              summary="An optional one-line summary of the role, shown above its bullets."
+            >
               <Bullet
                 label="A one-line result"
                 body="A longer description when the bullet reads better as a single sentence than as label plus sub-bullets."
               />
               <Bullet
                 label="A second one-line result"
-                body="Same pattern — use this shape for roles where the detail doesn't need to be broken out further."
+                separator=". "
+                body="Use a full stop after the lead when it is the first sentence of a longer bullet."
               />
             </Entry>
           </div>
@@ -380,6 +465,18 @@ const ResumePageTwo: Page = () => (
           <Entry date="2014 – 2018" company="Various organizations" roleTitle="Earlier job titles">
             <Bullet label="A brief note on earlier work, kept short since it's less relevant now" />
           </Entry>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <SectionTitle>Selected work</SectionTitle>
+          <BulletCell title="Projects and writing">
+            <SubBullet>
+              <LinkText label="A project name" href="https://example.com/project" />
+            </SubBullet>
+            <SubBullet>
+              <LinkText label="An article or case study" href="https://example.com/article" />
+            </SubBullet>
+          </BulletCell>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20 }}>

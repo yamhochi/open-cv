@@ -102,7 +102,7 @@ function visit(el) {
       return;
     case 'LetterParagraph':
       if (!out.length) out.push('');
-      out.push(text(el), '');
+      out.push(itemText(el), '');
       return;
     case 'BulletCell':
       out.push(`**${attr(el, 'title')}**`);
