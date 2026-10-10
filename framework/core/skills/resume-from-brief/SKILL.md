@@ -29,20 +29,7 @@ Read the whole brief. Then:
 
 ## 2. Write `docs/resumes/<id>.md`
 
-Structure and the mapping the Layout step relies on:
-
-| Markdown | Layout |
-| --- | --- |
-| `# Name` + contact line | `Header` (contact comes from the `CONTACT` const, do not retype it). An optional `headline:` in the front matter is the line under the name, omit it to render none |
-| `## Summary` paragraph | summary `<p>` |
-| `## Core skills and expertise`, each `**Category**` then body | `SkillCell title body` in the 2-column grid |
-| `### Company · Role` then `*Dates*` | `Entry company roleTitle date` (dates use an en dash) |
-| `- **Lead.** rest` | `Bullet label=Lead separator=". " body=rest` |
-| `- **Lead**: rest` | `Bullet label=Lead body=rest` |
-| `- A full sentence.` | `Bullet label="A full sentence."` (label only, medium weight) |
-| `- **Parent**` followed by indented `  - child` lines | `Bullet label=Parent` with one `SubBullet` per child (a bold line with no body and no children is not valid, add children or drop the bold) |
-| talks, education `- **Title**: detail` | `CompactEntry title body` |
-| `**Title**` followed by `- item` lines (a skills cell holding a list) | `BulletCell title` with one `SubBullet` per item |
+The grammar, and how each line maps to a Layout component, is in [references/content-format.md](references/content-format.md). Follow it exactly: the sync script and the Word export both read this file.
 
 Core skills rules (readability is the point):
 

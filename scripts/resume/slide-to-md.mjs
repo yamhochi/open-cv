@@ -1,10 +1,13 @@
 #!/usr/bin/env node
-// Reads a resume slide and prints the Markdown it corresponds to, in the format
-// documented in SKILL.md. Used to detect and absorb edits made directly on the slide.
+// Reads a Layout (slides/<id>/index.tsx) and prints the Content (Markdown) it corresponds to, in
+// the format documented in framework/core/skills/resume-from-brief/references/content-format.md.
+// Used to detect and absorb edits made directly in the editor.
 //
-//   node scripts/resume/slide-to-md.mjs <slide-id>           print
-//   node scripts/resume/slide-to-md.mjs <slide-id> --check   diff vs docs/resumes/<id>.md, exit 1 on drift
-//   node scripts/resume/slide-to-md.mjs <slide-id> --write   overwrite docs/resumes/<id>.md
+//   node scripts/resume/slide-to-md.mjs <id>           print
+//   node scripts/resume/slide-to-md.mjs <id> --check   diff vs docs/resumes/<id>.md, exit 1 on Drift
+//   node scripts/resume/slide-to-md.mjs <id> --write   overwrite docs/resumes/<id>.md
+//
+// Shortcuts: `pnpm resume:check <id>` and `pnpm resume:pull <id>`.
 import { spawnSync } from 'node:child_process';
 import { existsSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
@@ -15,7 +18,11 @@ import { fileURLToPath } from 'node:url';
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const { parse } = createRequire(join(repo, 'framework/core/package.json'))('@babel/parser');
 
-const [id, flag] = process.argv.slice(2);
+// The id is the first plain argument and the flag can come before or after it, so both
+// `slide-to-md.mjs <id> --check` and `pnpm resume:check <id>` work.
+const cliArgs = process.argv.slice(2);
+const id = cliArgs.find((a) => !a.startsWith('--'));
+const flag = cliArgs.find((a) => a.startsWith('--'));
 if (!id) {
   console.error('usage: slide-to-md.mjs <slide-id> [--check|--write]');
   process.exit(2);

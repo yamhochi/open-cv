@@ -16,9 +16,11 @@ The project's terms (Resume, Cover letter, Template, Page, Brief, Content, Layou
 
 ## Which skill to use
 
-- **Building or rewriting the resume** — use the `create-slide` skill. It has a dedicated "document" flow for resumes: it asks for your source material (an existing resume, PDF, or notes) rather than inventing content, and sizes the page to what you actually have.
+- **Designing or rebuilding a Layout from scratch** (a new look, a new structure, no existing resume to start from) — use the `create-slide` skill. For a resume the user already has, use `import-resume` instead.
 - **Applying inspector comments** (`@slide-comment` markers) — use the `apply-comments` skill.
-- **Tailoring the resume to a role** (brief, then Markdown, then slide, with sync both ways and the Word export) — use the `resume-from-brief` skill.
+- **The user already has a resume or cover letter** (pasted, a PDF, "import my resume") — use the `import-resume` skill. It writes Content only, then hands over to `sync-resume`.
+- **Content and Layout may disagree** ("sync", "I edited it in the editor", or at the start of any resume session) — use the `sync-resume` skill. Check with `pnpm resume:check <id>`.
+- **Tailoring a resume to a role** (brief, then Content, then Layout) — use the `resume-from-brief` skill.
 - **Picking or adapting a visual style** — use the `create-theme` skill if you want to extract a reusable theme; otherwise `create-slide` handles one-off styling.
 - **Resolving "this page" / "this element"** — use the `current-slide` skill.
 - **Any other edit** inside `slides/resume/` — read the `slide-authoring` skill first. It's the technical reference: file contract, canvas size, type scale, palette, layout, assets, self-review checklist.

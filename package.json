@@ -8,9 +8,10 @@
     "build": "open-slide build",
     "preview": "open-slide preview",
     "sync:skills": "open-slide sync:skills",
-    "resume:md": "node scripts/resume/slide-to-md.mjs",
     "export:docx": "node scripts/resume/md-to-docx.mjs",
-    "prepare": "pnpm --filter @open-slide/core build"
+    "prepare": "pnpm --filter @open-slide/core build",
+    "resume:check": "node scripts/resume/slide-to-md.mjs --check",
+    "resume:pull": "node scripts/resume/slide-to-md.mjs --write"
   },
   "dependencies": {
     "@open-slide/core": "workspace:*",
