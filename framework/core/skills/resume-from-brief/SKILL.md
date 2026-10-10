@@ -1,23 +1,23 @@
 ---
 name: resume-from-brief
-description: Tailor the resume to a role through a fixed flow - read the role brief in docs/resume-briefs, write the resume as Markdown in docs/resumes, then sync that Markdown into the resume slide in slides/ and verify it fits. Also syncs the other way, pulling edits made directly on the slide back into the Markdown. Use when the user asks to tailor, rewrite or update the resume for a role, to update the resume from the md, to sync the resume slide, to sync the slide back to the md, to check whether the resume and slide match, or to start a resume for a new role.
+description: Tailor the resume to a role through a fixed flow - read the role brief in docs/resume-briefs, write the resume as Markdown in docs/resumes, then sync that Markdown into the resume Layout in slides/ and verify it fits. Also syncs the other way, pulling edits made directly on the Layout back into the Markdown. Use when the user asks to tailor, rewrite or update the resume for a role, to update the resume from the md, to sync the resume Layout, to sync the Layout back to the md, to check whether the resume and Layout match, or to start a resume for a new role.
 ---
 
 # Resume from brief
 
-One role, three artefacts. The default order is brief, then Markdown, then slide, so when you are writing or rewriting, never edit the slide first. The user can also edit the slide directly in the inspector, so the flow runs backwards too (see "Sync back" below).
+One role, three artefacts. The default order is Brief, then Content (the Markdown), then Layout (the page file), so when you are writing or rewriting, never edit the Layout first. The user can also edit the Layout directly in the inspector, so the flow runs backwards too (see "Sync back" below).
 
 | Stage | File | Role |
 | --- | --- | --- |
 | 1. Brief (input) | `docs/resume-briefs/<id>.md` | Target role, JD keywords, confirmed experience, gaps, style. The only source of facts. |
-| 2. Resume (content) | `docs/resumes/<id>.md` | The words. Source of truth for the slide. Reviewed and edited by the user. |
-| 3. Slide (render) | `slides/<slide-id>/index.tsx` | Layout only. Text is copied from stage 2, never invented here. |
+| 2. Content | `docs/resumes/<id>.md` | The words, as Markdown. The default source for the Layout's text. Reviewed and edited by the user. |
+| 3. Layout | `slides/<id>/index.tsx` | How the words are arranged into Pages and styled. Text is copied from Content, never invented here. |
 
-**Every resume slide has a Markdown file in `docs/resumes/<slide-id>.md`.** The Word export needs it (the editor's Export as DOCX item or `pnpm export:docx`), and `slide-to-md.mjs --check` fails when it is missing. Duplicating a template in the editor copies its Markdown too, with `slide:` updated. For a slide made any other way, create the Markdown straight away with `node scripts/resume/slide-to-md.mjs <slide-id> --write`.
+**Every Resume and Cover letter has a Content file in `docs/resumes/<id>.md`.** The Word export needs it (the editor's Export as DOCX item or `pnpm export:docx`), and `slide-to-md.mjs --check` fails when it is missing. Duplicating a template in the editor copies its Markdown too, with `slide:` updated. For a Layout made any other way, create the Markdown straight away with `node scripts/resume/slide-to-md.mjs <id> --write`.
 
-Stage 2 carries front matter (`slide:` and `brief:`) so the three files stay linked. For a new role, copy the closest existing slide's folder under `slides/` and its Markdown, give it a new kebab-case id, a new `meta.title`, a fresh `createdAt` (`node -e "console.log(new Date().toISOString())"`) and a unique `FONT_LINK_ID`, then follow the flow.
+Stage 2 carries front matter (`slide:` and `brief:`) so the three files stay linked. For a new role, copy the closest existing Layout's folder under `slides/` and its Markdown, give it a new kebab-case id, a new `meta.title`, a fresh `createdAt` (`node -e "console.log(new Date().toISOString())"`) and a unique `FONT_LINK_ID`, then follow the flow.
 
-Before any slide edit, also follow the `slide-authoring` skill (canvas, spacing, pagination rules).
+Before any Layout edit, also follow the `slide-authoring` skill (canvas, spacing, pagination rules).
 
 ## 1. Read the brief
 
@@ -29,9 +29,9 @@ Read the whole brief. Then:
 
 ## 2. Write `docs/resumes/<id>.md`
 
-Structure and the mapping the slide step relies on:
+Structure and the mapping the Layout step relies on:
 
-| Markdown | Slide |
+| Markdown | Layout |
 | --- | --- |
 | `# Name` + contact line | `Header` (contact comes from the `CONTACT` const, do not retype it). An optional `headline:` in the front matter is the line under the name, omit it to render none |
 | `## Summary` paragraph | summary `<p>` |
@@ -53,14 +53,14 @@ Core skills rules (readability is the point):
 
 Style: follow the brief's Language register and Style sections. By default write plain, direct prose. Avoid em dashes and buzzwords (for example leverage, seamless, unlock, empower), aim for one sentence per bullet, and never invent metrics.
 
-## 3. Sync into the slide
+## 3. Sync into the Layout
 
 - Copy text from the Markdown. Do not paraphrase while syncing. For the core skills grid you can generate the `SkillCell` elements from the Markdown with a small node script.
-- Reuse the existing components (`Entry`, `Bullet`, `SkillCell`, `CompactEntry`, `Continued`). Do not change a shared template to fit one role.
+- Reuse the existing components (`Entry`, `Bullet`, `SkillCell`, `CompactEntry`, `Continued`). Do not change a shared component to fit one role.
 - Keep padding, max width and the 4px, 20px and 40px spacing tiers fixed. Overflow becomes a new page.
 - Never split an `Entry` across pages. Fill a page with whole entries and move the next one to the following page.
 - The last page ends with the contact footer. Every earlier page ends with `Continued`.
-- Remove components the slide no longer uses.
+- Remove components the Layout no longer uses.
 
 Component rules (so the inspector can edit and save a field without corrupting the shared component):
 
@@ -81,7 +81,7 @@ This resume uses two marker shapes on purpose, chosen by level. This is a delibe
 
 Rules behind these:
 
-- Section spacing for this resume is 24px between named sections (`SECTION_GAP` in the slide and the Word export), 20px between entries and between a heading and its first item. It is a deliberate step down from the 40px default in `slide-authoring`.
+- Section spacing for this resume is 24px between named sections (`SECTION_GAP` in the Layout and the Word export), 20px between entries and between a heading and its first item. It is a deliberate step down from the 40px default in `slide-authoring`.
 - Markers are drawn shapes (a box with a background or border), never typed characters such as `•`, `-` or `·`. A typed marker becomes part of the text, so it shows up when the PDF is copied or parsed.
 - One parent level and one child level only. A parent with children is written `- **Parent**` with the children indented two spaces. A bold line with no children is not valid.
 - A list under a skills title is written `**Title**` then `- item` lines. An item can be a link, written `- [label](https://url)`. It renders as the label only, in a vivid blue (`#1D4ED8`) with a thin light blue underline (`#A5B8F0`), and the address stays hidden behind it. A list item with no link stays plain grey. Applicant systems that read only the page text will not see the address, so keep contact links (website, LinkedIn) as visible text in the header.
@@ -96,13 +96,13 @@ Run all of these and fix what fails.
 # Style on the Markdown
 grep -n "—" docs/resumes/<id>.md
 grep -inE "leverag|seamless|unlock|empower" docs/resumes/<id>.md
-# The slide and the Markdown must say the same thing
-node scripts/resume/slide-to-md.mjs <slide-id> --check
+# The Layout and the Content must say the same thing
+node scripts/resume/slide-to-md.mjs <id> --check
 ```
 
-The last command parses the slide with the same Babel parser the editor uses, regenerates the Markdown from it, and diffs against `docs/resumes/<id>.md`. `-` lines are the Markdown, `+` lines are the slide. It exits 1 on any difference, so you cannot finish a sync with the two out of step.
+The last command parses the Layout with the same Babel parser the editor uses, regenerates the Markdown from it, and diffs against `docs/resumes/<id>.md`. `-` lines are the Markdown, `+` lines are the Layout. It exits 1 on any difference, so you cannot finish a sync with the two out of step.
 
-Fit: open each page in the dev server (`pnpm dev`, usually port 5173) at `/s/<slide-id>?p=N`. The first load waits on webfonts, so poll until the slide mounts, then run:
+Fit: open each page in the dev server (`pnpm dev`, usually port 5173) at `/s/<id>?p=N`. The first load waits on webfonts, so poll until the Layout mounts, then run:
 
 ```js
 let root;
@@ -118,23 +118,23 @@ The usable height is 1027px. Add the page's children plus the 24px gaps between 
 
 Also read each page's text (`get_page_text`) and compare against the Markdown.
 
-## Sync back (slide to Markdown)
+## Sync back (Layout to Content)
 
-Edits the user makes directly on the slide in the browser never pass through Claude, so the Markdown goes stale. Run this at the start of any resume session, and whenever the user says they edited the slide:
+Edits the user makes directly on the Layout in the browser never pass through Claude, so the Markdown goes stale. Run this at the start of any resume session, and whenever the user says they edited the slide:
 
 ```bash
-node scripts/resume/slide-to-md.mjs <slide-id> --check
+node scripts/resume/slide-to-md.mjs <id> --check
 ```
 
 - **In sync** (exit 0): carry on with the normal flow.
 - **Drift** (exit 1): read the diff and decide who wins.
-  - Only the slide changed (the Markdown is unchanged since the last sync, check `git diff docs/resumes/<id>.md`): the slide wins. Run `--write` to pull the edits into the Markdown, then re-run the style checks in step 4 on the result, because slide edits bypass them. Tell the user which lines changed.
-  - Only the Markdown changed (the user edited the file, the slide is unchanged): the Markdown wins. Sync it into the slide as in step 3.
+  - Only the Layout changed (the Markdown is unchanged since the last sync, check `git diff docs/resumes/<id>.md`): the Layout wins. Run `--write` to pull the edits into the Markdown, then re-run the style checks in step 4 on the result, because Layout edits bypass them. Tell the user which lines changed.
+  - Only the Markdown changed (the user edited the file, the Layout is unchanged): the Markdown wins. Sync it into the Layout as in step 3.
   - Both changed, or you cannot tell: show the user the diff and ask. Never overwrite either side blind.
-- `--write` only regenerates the Markdown body. The name and contact line at the top are kept from the existing file, because the slide builds them from the `CONTACT` const.
-- The script only understands this slide's components (`SectionTitle`, `SkillCell`, `Entry`, `Bullet`, `CompactEntry`, the summary `<p>`). If a new kind of component is added to the slide, extend the script in the same change, or the new content will be missing from the Markdown.
+- `--write` only regenerates the Markdown body. The name and contact line at the top are kept from the existing file, because the Layout builds them from the `CONTACT` const.
+- The script only understands this Layout's components (`SectionTitle`, `SkillCell`, `Entry`, `Bullet`, `CompactEntry`, the summary `<p>`). If a new kind of component is added to the Layout, extend the script in the same change, or the new content will be missing from the Markdown.
 
-Anything the slide edit introduced that is not in the brief's confirmed experience is flagged in the report, the same as for new content.
+Anything the Layout edit introduced that is not in the brief's confirmed experience is flagged in the report, the same as for new content.
 
 ## Export to Word
 
@@ -143,16 +143,16 @@ Anything the slide edit introduced that is not in the brief's confirmed experien
 In the editor, open the Download menu and choose Export as DOCX. From the terminal:
 
 ```bash
-pnpm export:docx <slide-id> [out.docx]
+pnpm export:docx <id> [out.docx]
 ```
 
-Without an output path it writes `docs/resumes/<id>.docx`, which is ignored. The export follows the slide's design: Inter and Geist Mono, 9pt body, muted greys, the two-column skills grid, spacing and bullet styles from the style guide, A4 with the slide's margins. Entries never split across pages. If you change the slide's styling, change the tokens at the top of `scripts/resume/md-to-docx.mjs` too. The one dependency (`docx`) belongs to the `scripts/resume` workspace package, so `pnpm install` at the repo root installs it. The design's medium weight (500) uses the "Inter Medium" family, which Google Docs has; add `--bold` if a viewer lacks it. For Google Docs, upload the file and open it with Docs.
+Without an output path it writes `docs/resumes/<id>.docx`, which is ignored. The export follows the Layout's design: Inter and Geist Mono, 9pt body, muted greys, the two-column skills grid, spacing and bullet styles from the style guide, A4 with the Layout's margins. Entries never split across pages. If you change the Layout's styling, change the tokens at the top of `scripts/resume/md-to-docx.mjs` too. The one dependency (`docx`) belongs to the `scripts/resume` workspace package, so `pnpm install` at the repo root installs it. The design's medium weight (500) uses the "Inter Medium" family, which Google Docs has; add `--bold` if a viewer lacks it. For Google Docs, upload the file and open it with Docs.
 
 ## 5. Report
 
 Say, briefly:
 
-- What changed in the Markdown and slide, and the page count with the space left on each page.
+- What changed in the Markdown and Layout, and the page count with the space left on each page.
 - JD keyword coverage: which themes are covered and in which category, and which were deliberately not claimed because the brief has no confirmed experience for them (for example a language or tool the job description names that you have not used).
 - Anything in the Markdown that is not in the brief's confirmed experience, flagged for the user to confirm before it goes out.
 

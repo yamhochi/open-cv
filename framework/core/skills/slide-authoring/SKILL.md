@@ -9,8 +9,8 @@ This skill is the **technical reference** for everything that happens inside `sl
 
 - `create-slide` owns "draft a new deck" — it asks the user scoping questions, then delegates the *how* to this skill.
 - `apply-comments` owns "process inspector markers" — it finds markers and applies edits, but the edits themselves follow the rules here.
-- `current-slide` resolves deictic references ("this page", "the template I'm on") to a concrete `slideId` + `pageIndex`. Consult it **first** when the user references the current template without naming it, then come back here for how to edit it.
-- Any ad-hoc template edit (manual tweak, one-off fix) should also consult this skill before touching the file.
+- `current-slide` resolves deictic references ("this page", "the Layout I'm on") to a concrete `slideId` + `pageIndex`. Consult it **first** when the user references the current Layout without naming it, then come back here for how to edit it.
+- Any ad-hoc Layout edit (manual tweak, one-off fix) should also consult this skill before touching the file.
 
 When any of those paths reach the point of *writing React code for a page*, this is the source of truth. Do not duplicate the knowledge below into other skills — link here instead.
 
@@ -20,7 +20,7 @@ Each framework primitive has a full reference file under `references/` in this s
 
 | Primitive | Read before | File |
 | --- | --- | --- |
-| `design` const + `var(--osd-X)` tokens | writing any new template (default baseline) | `references/design-system.md` |
+| `design` const + `var(--osd-X)` tokens | writing any new Layout (default baseline) | `references/design-system.md` |
 | Assets + `<ImagePlaceholder>` | importing images/videos or leaving a placeholder | `references/assets.md` |
 | Webfonts | loading any non-system font | `references/webfonts.md` |
 | `useSlidePageNumber()` | rendering a page-number footer | `references/page-numbers.md` |
@@ -30,11 +30,11 @@ Each framework primitive has a full reference file under `references/` in this s
 
 ## Hard rules
 
-- Put the template under `slides/<kebab-case-id>/`.
+- Put the Layout under `slides/<kebab-case-id>/`.
 - Entry is `slides/<id>/index.tsx`. Images/videos/fonts go under `slides/<id>/assets/`.
-- Do **not** touch `package.json`, `open-slide.config.ts`, or other templates.
+- Do **not** touch `package.json`, `open-slide.config.ts`, or other Layouts.
 - Do not add dependencies. Only `react`, `@open-slide/core`, and standard web APIs are available.
-- A template is **one `index.tsx` plus `assets/`** — nothing else. Do not create sibling `.tsx`/`.ts` files (`Card.tsx`, `components/`, `helpers.ts`, etc.); helper components and constants go inside `index.tsx`. Do not create `README.md` or other prose files either.
+- A Layout is **one `index.tsx` plus `assets/`** — nothing else. Do not create sibling `.tsx`/`.ts` files (`Card.tsx`, `components/`, `helpers.ts`, etc.); helper components and constants go inside `index.tsx`. Do not create `README.md` or other prose files either.
 
 ## File contract
 
@@ -53,14 +53,14 @@ export default [Cover, Body] satisfies Page[];
 ```
 
 - `export default` is a **non-empty array of zero-prop React components**, one per page, in order.
-- `meta.title` (optional) shows in the template header. Default is the folder name.
-- The template id is the kebab-case folder name. Pick something short and descriptive (`q2-roadmap`, `team-offsite-2026`).
-- `meta.theme` (optional) marks the template as built from a theme under `themes/`. The id must match a `<id>.md` basename. Surfaces a back-link chip on the template card and lists the template on `/themes/<id>`. Omit if the template isn't derived from a registered theme.
-- `meta.createdAt` is an **ISO 8601 string literal** (e.g. `'2026-05-16T12:00:00Z'`) set once when the template is scaffolded. The home page uses it for the default "newest first" sort. Always include it on new templates — **immediately before writing the file, run `node -e "console.log(new Date().toISOString())"` via Bash and paste the exact output** as the value. Don't type a timestamp from memory — you will get the date or time wrong. Must be a plain string literal (no `new Date(...)` or imports in the template itself) — the framework reads it via a regex at build time, not by evaluating the module.
+- `meta.title` (optional) shows in the Layout header. Default is the folder name.
+- The Layout id is the kebab-case folder name. Pick something short and descriptive (`q2-roadmap`, `team-offsite-2026`).
+- `meta.theme` (optional) marks the Layout as built from a theme under `themes/`. The id must match a `<id>.md` basename. Surfaces a back-link chip on the Layout card and lists the Layout on `/themes/<id>`. Omit if the Layout isn't derived from a registered theme.
+- `meta.createdAt` is an **ISO 8601 string literal** (e.g. `'2026-05-16T12:00:00Z'`) set once when the Layout is scaffolded. The home page uses it for the default "newest first" sort. Always include it on new Layouts — **immediately before writing the file, run `node -e "console.log(new Date().toISOString())"` via Bash and paste the exact output** as the value. Don't type a timestamp from memory — you will get the date or time wrong. Must be a plain string literal (no `new Date(...)` or imports in the Layout itself) — the framework reads it via a regex at build time, not by evaluating the module.
 
-## Editing an existing template
+## Editing an existing Layout
 
-A finished template commonly runs 1000–1800 lines. When you only need to touch one page, **don't read the whole file** — locate the page first, then read just that range:
+A finished Layout commonly runs 1000–1800 lines. When you only need to touch one page, **don't read the whole file** — locate the page first, then read just that range:
 
 ```bash
 grep -n ": Page = " slides/<id>/index.tsx
@@ -141,19 +141,19 @@ The default is a system font stack — prefer it. When a deck genuinely needs a 
 
 ## Themes
 
-If `themes/<id>.md` exists at the project root and the template is meant to follow it, **the theme file overrides the defaults in this skill** — its palette, typography, layout padding, and Title/Footer components are authoritative. Read the theme file before applying anything else in this section.
+If `themes/<id>.md` exists at the project root and the Layout is meant to follow it, **the theme file overrides the defaults in this skill** — its palette, typography, layout padding, and Title/Footer components are authoritative. Read the theme file before applying anything else in this section.
 
-Themes are produced by the `create-theme` skill and are pure documentation: copy the palette and the paste-ready Title / Footer / Eyebrow components straight into your template. If the theme's frontmatter has `mode: dark` or `mode: light`, treat that as the template's background mode (e.g. when picking which logo variant to import).
+Themes are produced by the `create-theme` skill and are pure documentation: copy the palette and the paste-ready Title / Footer / Eyebrow components straight into your Layout. If the theme's frontmatter has `mode: dark` or `mode: light`, treat that as the Layout's background mode (e.g. when picking which logo variant to import).
 
 ## Design system (opt-in, per-slide)
 
-A template can declare typed design tokens at the top of `index.tsx` — `export const design: DesignSystem = { palette, fonts, typeScale, radius }` — and consume them via `var(--osd-X)` in inline styles. The framework injects the CSS variables at the canvas root, and the dev UI's Design panel can live-tweak them.
+A Layout can declare typed design tokens at the top of `index.tsx` — `export const design: DesignSystem = { palette, fonts, typeScale, radius }` — and consume them via `var(--osd-X)` in inline styles. The framework injects the CSS variables at the canvas root, and the dev UI's Design panel can live-tweak them.
 
-**Default to using it.** Every new template should declare a `design` const so it stays tweakable from the panel after generation. Only fall back to plain palette constants for a one-off template whose palette is intentionally locked (`references/design-system.md` covers the fallback).
+**Default to using it.** Every new Layout should declare a `design` const so it stays tweakable from the panel after generation. Only fall back to plain palette constants for a one-off Layout whose palette is intentionally locked (`references/design-system.md` covers the fallback).
 
 `references/design-system.md` has the full token shape, the two consumption surfaces (`var(--osd-X)` vs direct `design.X` reads), Design panel behavior, and the format constraints the panel's AST writer requires. Read it before writing the const.
 
-## Starter template
+## Starter Layout
 
 ```tsx
 import type { DesignSystem, Page, SlideMeta } from '@open-slide/core';
@@ -231,7 +231,7 @@ export default [Cover, Content] satisfies Page[];
 
 ## Assets
 
-Slide-local assets live under `slides/<id>/assets/` and are imported as ES modules (`import hero from './assets/hero.jpg'`). Global assets shared across decks (logos, avatars, recurring icons) live in the project root `assets/` and are imported via the `@assets` alias. For a pure-text template, don't create `slides/<id>/assets/` at all.
+Slide-local assets live under `slides/<id>/assets/` and are imported as ES modules (`import hero from './assets/hero.jpg'`). Global assets shared across decks (logos, avatars, recurring icons) live in the project root `assets/` and are imported via the `@assets` alias. For a pure-text Layout, don't create `slides/<id>/assets/` at all.
 
 `references/assets.md` covers import forms (module vs `new URL(...)`), the `@assets` alias, and how themes name asset paths.
 
@@ -253,7 +253,7 @@ Read `references/steps.md` before authoring a stepped page — it covers composi
 
 ## Page transitions
 
-The framework can run an enter/exit animation between template changes, declared as a `SlideTransition` (module-level default, per-page override; the **incoming page wins**). There's **no default** — pages snap unless you opt in, and snap-swap is a perfectly tasteful default. If you do opt in: one motion DNA per deck, 200–280 ms, magnitude under 12 px / 3% scale, the outgoing page holds while the incoming page fades in on top (the framework ignores exit opacity unless `throughBackground: true`).
+The framework can run an enter/exit animation between page changes, declared as a `SlideTransition` (module-level default, per-page override; the **incoming page wins**). There's **no default** — pages snap unless you opt in, and snap-swap is a perfectly tasteful default. If you do opt in: one motion DNA per deck, 200–280 ms, magnitude under 12 px / 3% scale, the outgoing page holds while the incoming page fades in on top (the framework ignores exit opacity unless `throughBackground: true`).
 
 Read `references/transitions.md` before declaring one — it has the full type contract, design principles, a six-member "tasteful family" of ready-to-use transitions sharing one DNA, direction-aware keyframes, and the anti-pattern list.
 
@@ -267,7 +267,7 @@ Read `references/morph.md` before writing one — the seven rules there (held ex
 
 When a page has visually repeated items — cards, logo rows, gallery tiles, list rows, step indicators — **define a small component and instantiate it once per item**. Do **not** render the group with `array.map` over a data array.
 
-Define the component **in the same `index.tsx`**, alongside the `Page` components. Never split it into a sibling file like `Card.tsx` — a template is always a single `index.tsx` plus its `assets/`.
+Define the component **in the same `index.tsx`**, alongside the `Page` components. Never split it into a sibling file like `Card.tsx` — a Layout is always a single `index.tsx` plus its `assets/`.
 
 ```tsx
 // ✅ Each card is its own JSX node — inspector edits one at a time.
@@ -337,7 +337,7 @@ Plain `<ul><li>` markup with literal `<li>` children is also fine when you don't
 ## Runtime behavior you get for free
 
 - Home page lists every folder under `slides/`.
-- Clicking a template shows a left thumbnail rail, main page, prev/next, page counter.
+- Clicking a Layout shows a left thumbnail rail, main page, prev/next, page counter.
 - Arrow keys / PageUp / PageDown navigate. `F` enters fullscreen play mode.
 - In play mode: Space/→ next, ← prev, Esc exit.
 - Hot reload: edit `index.tsx` and the browser updates live.
@@ -350,7 +350,7 @@ Plain `<ul><li>` markup with literal `<li>` children is also fine when you don't
 - [ ] **For every page, sum (font_size × line_height × lines) + gaps + 2×padding ≤ 1123px.** If close, split the page. No `overflow: auto` escape hatches.
 - [ ] No bullet wraps to a second line at the chosen font size.
 - [ ] One coherent visual direction across every page (palette + type scale).
-- [ ] Template declares a top-level `export const design: DesignSystem = { … }` and references the values via `var(--osd-X)` (use `design.X` only when you need a JS number for arithmetic). Only omit the `design` const for a one-off template whose palette is intentionally locked.
+- [ ] Layout declares a top-level `export const design: DesignSystem = { … }` and references the values via `var(--osd-X)` (use `design.X` only when you need a JS number for arithmetic). Only omit the `design` const for a one-off Layout whose palette is intentionally locked.
 - [ ] One idea per page.
 - [ ] Visually repeated elements (cards, tiles, logo rows) are rendered as explicit `<Component />` instances, not via `array.map` over a data list.
 - [ ] All imported assets exist on disk — slide-local under `slides/<id>/assets/`, or global under `assets/` (imported via `@assets/...`).
@@ -372,6 +372,6 @@ Plain `<ul><li>` markup with literal `<li>` children is also fine when you don't
 - ❌ Inconsistent palette across pages.
 - ❌ Installing packages. Only `react`, `@open-slide/core`, and standard web APIs are available.
 - ❌ Writing CSS to a shared file. Inline styles or scoped classnames only.
-- ❌ Creating `README.md` or other prose files inside the template folder.
-- ❌ Editing `package.json`, `open-slide.config.ts`, or other templates.
+- ❌ Creating `README.md` or other prose files inside the Layout folder.
+- ❌ Editing `package.json`, `open-slide.config.ts`, or other Layouts.
 - ❌ Using a primitive without reading its reference file — each `references/*.md` carries the primitive's own anti-pattern list (placeholder misuse, transition vocabulary, `<Step>` nesting, morph geometry).

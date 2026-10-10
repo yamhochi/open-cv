@@ -1,6 +1,6 @@
 # Design system (`design` const + `var(--osd-X)`)
 
-A template can declare its own typed design tokens at the top of `index.tsx`:
+A Layout can declare its own typed design tokens at the top of `index.tsx`:
 
 ```tsx
 import type { DesignSystem, Page } from '@open-slide/core';
@@ -18,7 +18,7 @@ export const design: DesignSystem = {
 
 `export` it (rather than plain `const`) so the framework can read the object and inject CSS variables at the canvas root automatically.
 
-The shape is intentionally minimal — it only covers what the Design panel can currently tweak. Anything outside this set (heading sizes, spacing, motion, extra palette colors) belongs as plain hard-coded constants in the template file.
+The shape is intentionally minimal — it only covers what the Design panel can currently tweak. Anything outside this set (heading sizes, spacing, motion, extra palette colors) belongs as plain hard-coded constants in the Layout file.
 
 ## Two consumption surfaces
 
@@ -37,9 +37,9 @@ There are **two consumption surfaces**; both may appear in the same slide:
 
 ## The Design panel
 
-The dev UI has a **Design** button in the template header (next to Inspect). Edits update an in-memory draft and the live-preview overlay; a floating Save / Discard bar at the bottom of the canvas commits or reverts. The const stays the single source of truth — production builds bake the saved values.
+The dev UI has a **Design** button in the Layout header (next to Inspect). Edits update an in-memory draft and the live-preview overlay; a floating Save / Discard bar at the bottom of the canvas commits or reverts. The const stays the single source of truth — production builds bake the saved values.
 
-**Default to using it.** Every new template should declare a `design` const so it stays tweakable from the panel after generation — this is the expected baseline. Only fall back to plain top-of-file constants (`const palette = { bg: …, text: …, accent: … }`, referenced directly in styles) for a one-off template whose palette is intentionally locked and not meant to be re-themed. Both styles can coexist across templates — the panel only operates on the *currently viewed* template.
+**Default to using it.** Every new Layout should declare a `design` const so it stays tweakable from the panel after generation — this is the expected baseline. Only fall back to plain top-of-file constants (`const palette = { bg: …, text: …, accent: … }`, referenced directly in styles) for a one-off Layout whose palette is intentionally locked and not meant to be re-themed. Both styles can coexist across Layouts — the panel only operates on the *currently viewed* Layout.
 
 ## Format constraints (for the panel's AST writer)
 

@@ -3,34 +3,34 @@ name: create-theme
 description: Use this skill when the user wants to create, draft, author, or extract a slide theme in this open-slide repo. Triggers on phrases like "create a theme", "make a theme called X", "extract a theme from <slide>", "build a theme from these images". Produces two paired files under `themes/` — `<id>.md` (palette, typography, layout, fixed Title/Footer components, motion) and `<id>.demo.tsx` (a runnable demo slide that the dev-UI Themes panel previews). Do NOT use for editing real slides — only for authoring the theme bundle.
 ---
 
-# Create a template theme
+# Create a Layout theme
 
 This skill produces a **theme bundle** under `themes/`: two paired files that together describe a reusable visual identity.
 
 1. `themes/<id>.md` — agent-facing documentation: palette, typography, layout, fixed Title/Footer/Eyebrow components, motion. This is what `create-slide` reads when an author picks the theme.
-2. `themes/<id>.demo.tsx` — a runnable mini-slide (a normal template module: `export default Page[]`) that demonstrates the theme on 2–3 pages. The dev UI's **Themes panel** loads this file and renders it as the theme's live preview.
+2. `themes/<id>.demo.tsx` — a runnable mini-slide (a normal Layout module: `export default Page[]`) that demonstrates the theme on 2–3 pages. The dev UI's **Themes panel** loads this file and renders it as the theme's live preview.
 
 Both files share the same stem so the runtime can pair them automatically.
 
-A theme is **distinct from a template's `design` const**. The theme markdown is authoring-time aesthetic direction (copied into a real template's source by `create-slide`). The demo `.tsx` is a self-contained preview, not a real template — it does not appear in the templates list. A per-slide `const design: DesignSystem = { … }` (declared at the top of `slides/<id>/index.tsx`) is the runtime tokens object the user can tweak from the Design panel. The markdown commits the *direction*; the per-slide `design` const makes the template *tweakable*; the demo `.tsx` makes the theme *previewable*.
+A theme is **distinct from a Layout's `design` const**. The theme markdown is authoring-time aesthetic direction (copied into a real Layout's source by `create-slide`). The demo `.tsx` is a self-contained preview, not a real Layout — it does not appear in the Layouts list. A per-slide `const design: DesignSystem = { … }` (declared at the top of `slides/<id>/index.tsx`) is the runtime tokens object the user can tweak from the Design panel. The markdown commits the *direction*; the per-slide `design` const makes the Layout *tweakable*; the demo `.tsx` makes the theme *previewable*.
 
-You only write files under `themes/<id>.md` and `themes/<id>.demo.tsx`. Never modify real templates or other configuration. The canvas / type-scale defaults that themes can override live in the **`slide-authoring`** skill — read it before writing the theme so your overrides are stated explicitly.
+You only write files under `themes/<id>.md` and `themes/<id>.demo.tsx`. Never modify real Layouts or other configuration. The canvas / type-scale defaults that themes can override live in the **`slide-authoring`** skill — read it before writing the theme so your overrides are stated explicitly.
 
 ## Step 1 — Identify the input source
 
 A theme can be derived from any combination of three input shapes:
 
-- **Image references** — paths or URLs to template screenshots, mood-board images, brand assets.
+- **Image references** — paths or URLs to Layout screenshots, mood-board images, brand assets.
 - **Free-text description** — prose describing the desired palette, fonts, feel.
-- **An existing template** — `slides/<id>/index.tsx` whose visual identity should be lifted out into a reusable theme.
+- **An existing Layout** — `slides/<id>/index.tsx` whose visual identity should be lifted out into a reusable theme.
 
-If the user's original message already specifies the inputs unambiguously, skip the question and proceed. Otherwise call `AskUserQuestion` (multi-select) so they can pick one or more sources, and ask follow-ups (paths, template id, prose) only as needed.
+If the user's original message already specifies the inputs unambiguously, skip the question and proceed. Otherwise call `AskUserQuestion` (multi-select) so they can pick one or more sources, and ask follow-ups (paths, Layout id, prose) only as needed.
 
 ## Step 2 — Gather raw inputs
 
 - **Images**: read each path with the `Read` tool (it accepts images). Note dominant colors as hex, type weight/style, layout rhythm, decorative motifs, and any recurring chrome (header bar, footer line, page numbers).
 - **Text**: extract explicit tokens (hex codes, font names, motion verbs) and implicit tone words ("editorial", "playful", "brutalist"). Resolve vague language into concrete decisions before writing.
-- **Existing template**: read `slides/<id>/index.tsx` and pull:
+- **Existing Layout**: read `slides/<id>/index.tsx` and pull:
   - The `design.palette` object (or a legacy top-of-file `palette` const) → Palette section.
   - `design.fonts` / font constants and any `font-size` patterns → Typography section.
   - Padding / alignment patterns → Layout section.
@@ -168,7 +168,7 @@ const Cover: Page = () => (
     <Eyebrow>CHAPTER 01</Eyebrow>
     <Title>The Big Idea</Title>
     <p style={{ fontSize: 36, color: '#94a3b8', maxWidth: 1200, marginTop: 32 }}>
-      A short subtitle that explains what this template is about.
+      A short subtitle that explains what this Layout is about.
     </p>
     <Footer />
   </div>
@@ -178,15 +178,15 @@ const Cover: Page = () => (
 
 ## Step 4b — Write `themes/<id>.demo.tsx`
 
-The demo is a normal template module — same shape as `slides/<id>/index.tsx`, just sitting under `themes/` so the runtime knows it's preview-only. The dev-UI Themes panel imports it and renders it inside `SlideCanvas` (794×1123).
+The demo is a normal Layout module — same shape as `slides/<id>/index.tsx`, just sitting under `themes/` so the runtime knows it's preview-only. The dev-UI Themes panel imports it and renders it inside `SlideCanvas` (794×1123).
 
 Contract:
 
 - `import { type Page, useSlidePageNumber } from '@open-slide/core';`
-- Inline the **same** `Title`, `Footer`, `Eyebrow` components defined in the theme markdown — verbatim, no abstractions, no imports from elsewhere. The demo and the markdown must stay in lockstep so what the user sees in the panel matches what `create-slide` will paste into a real template.
+- Inline the **same** `Title`, `Footer`, `Eyebrow` components defined in the theme markdown — verbatim, no abstractions, no imports from elsewhere. The demo and the markdown must stay in lockstep so what the user sees in the panel matches what `create-slide` will paste into a real Layout.
 - Export 2–3 `Page` components and a default array. Aim for: a Cover (Eyebrow + Title + subtitle), one Content page exercising body type + accent, and a Closer or "End" card. The "Example usage" block at the bottom of the markdown is a good starting point — extend it.
 - If the theme has runtime-tweakable tokens worth surfacing in the Design panel later, also `export const design: DesignSystem = {...}` (add `import type { DesignSystem } from '@open-slide/core';` alongside the base import).
-- No asset file imports, no `import` from `@/`, no slides-only helpers (e.g. `WindowShell` from a real template). Webfont stylesheet `@import`s inside an inline `<style>` are fine here — a deliberate exception to `webfonts.md`'s loader rules, since the demo only mounts in the Themes panel. Demo files must be self-contained.
+- No asset file imports, no `import` from `@/`, no slides-only helpers (e.g. `WindowShell` from a real Layout). Webfont stylesheet `@import`s inside an inline `<style>` are fine here — a deliberate exception to `webfonts.md`'s loader rules, since the demo only mounts in the Themes panel. Demo files must be self-contained.
 
 Skeleton:
 
@@ -227,7 +227,7 @@ Run this checklist before finishing:
 - [ ] At least Title and Footer are defined as paste-ready React with concrete inline styles.
 - [ ] Motion section commits to one of static / subtle / rich.
 - [ ] Aesthetic paragraph names a single coherent direction.
-- [ ] Both files written: `themes/<id>.md` and `themes/<id>.demo.tsx`. No template changes, no config changes.
+- [ ] Both files written: `themes/<id>.md` and `themes/<id>.demo.tsx`. No page changes, no config changes.
 - [ ] Demo `.tsx` exports 2–3 pages and inlines the same Title/Footer/Eyebrow components defined in the markdown.
 - [ ] Demo `.tsx` will load cleanly in the **Themes** panel: verify it against the Step 4b contract by reading the file — do not start a server.
 
@@ -240,14 +240,14 @@ Tell the user:
 - That `/create-slide` will list the theme as a picker option on its next run.
 - A one-line summary of the look (palette + aesthetic).
 
-Do not run the dev server. Do not modify real templates — even to demonstrate the theme; the demo `.tsx` is the demonstration.
+Do not run the dev server. Do not modify real Layouts — even to demonstrate the theme; the demo `.tsx` is the demonstration.
 
 ## Anti-patterns
 
 - ❌ Writing executable code in `themes/<id>.md` outside the labeled component snippets — the markdown is documentation.
 - ❌ Producing only the markdown without the demo, or only the demo without the markdown. A theme is the **bundle** — both files, every time.
-- ❌ Treating `themes/<id>.demo.tsx` as a real template. It is preview-only and lives outside the templates list; never put it under `slides/`.
+- ❌ Treating `themes/<id>.demo.tsx` as a real Layout. It is preview-only and lives outside the Layouts list; never put it under `slides/`.
 - ❌ Importing from `@/` or any slide-specific helper inside the demo. The demo is self-contained.
-- ❌ Inventing palette / fonts when the user supplied images or an existing template. Extract, don't fabricate.
+- ❌ Inventing palette / fonts when the user supplied images or an existing Layout. Extract, don't fabricate.
 - ❌ Editing `slides/`, `packages/`, `package.json`, or `open-slide.config.ts`.
 - ❌ Skipping the Fixed components section. Title and Footer are the most common reuse target — they must be paste-ready.
