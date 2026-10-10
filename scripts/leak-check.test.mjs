@@ -25,6 +25,12 @@ test('flags non-dictionary names and a copied run of five words', () => {
   assert.ok(kinds('We led the quuxly team that cut costs').includes('phrase'));
 });
 
+test('does not treat a date as a phone number', () => {
+  const withDate = buildTerms(['Added on 2026-10-09 and 400 123 456 789.'], dictionary);
+  assert.deepEqual(scanText('createdAt: 2026-10-09', withDate, true).map((f) => f.kind), []);
+  assert.ok(scanText('Call 400 123 456 789', withDate, true).map((f) => f.kind).includes('phone'));
+});
+
 test('flags a metric that also appears in the private text', () => {
   assert.ok(kinds('Improved retention by 37%').includes('metric'));
   assert.deepEqual(kinds('Improved retention by 12%'), []);

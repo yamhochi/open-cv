@@ -45,6 +45,9 @@ const GENERIC = new Set(
 // Hosts that are safe in a public template, so they are never treated as private.
 const PUBLIC_HOSTS = /^(?:https?:\/\/)?(?:www\.)?(?:example\.(?:com|org|net)|yoursite\.com|localhost|github\.com\/yamhochi\/open-cv|github\.com\/open-slide|fonts\.googleapis\.com|npmjs\.com)/;
 
+// 2026-10-10 or 10/10/2026 looks like a long number but is a date, not a phone number.
+const isDate = (v) => /^\s*(?:\d{4}[-/.]\d{1,2}[-/.]\d{1,2}|\d{1,2}[-/.]\d{1,2}[-/.]\d{4})\s*$/.test(v);
+
 const words = (text) => text.toLowerCase().match(/[a-z0-9][a-z0-9'’%$.-]*[a-z0-9%$]|[a-z0-9]/g) ?? [];
 
 function loadDictionary() {
@@ -83,7 +86,7 @@ export function buildTerms(texts, dictionary = loadDictionary()) {
     for (const m of text.matchAll(/[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g)) emails.add(m[0].toLowerCase());
     for (const m of text.matchAll(/(?<![\w.])\+?\d[\d\s().-]{7,}\d/g)) {
       const digits = m[0].replace(/\D/g, '');
-      if (digits.length >= 8 && digits.length <= 15) phones.add(digits);
+      if (!isDate(m[0]) && digits.length >= 8 && digits.length <= 15) phones.add(digits);
     }
     for (const m of text.matchAll(/(?:https?:\/\/)?(?:[a-z0-9-]+\.)+[a-z]{2,}(?:\/[^\s)>\]"']*)?/gi)) {
       const u = m[0].replace(/[.,;:]+$/, '').toLowerCase();
@@ -123,7 +126,7 @@ export function scanText(text, matcher, reveal = false) {
     for (const e of matcher.emails) if (lower.includes(e)) add('email', e);
     for (const m of line.matchAll(/(?<![\w.])\+?\d[\d\s().-]{7,}\d/g)) {
       const d = m[0].replace(/\D/g, '');
-      if (matcher.phones.has(d)) add('phone', d);
+      if (!isDate(m[0]) && matcher.phones.has(d)) add('phone', d);
     }
     for (const u of matcher.urls) if (lower.includes(u)) add('url', u);
     for (const m of line.matchAll(/(?:\$\s?\d[\d,.]*\s?[kKmMbB]?\b|\b\d[\d,.]*\s?(?:%|[kKmM]\b))/g)) {
