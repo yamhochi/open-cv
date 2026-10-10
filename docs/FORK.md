@@ -58,4 +58,4 @@ git merge upstream-src-X.Y.Z
 pnpm install && pnpm sync:skills && pnpm dev
 ```
 
-Conflicts show up only where upstream changed lines this fork also changed. This flow has not been run against a real newer release yet.
+Conflicts show up only where upstream changed lines this fork also changed. As a dry run, merging upstream 2.1.0 (39 files changed since 2.0.1) into this fork conflicted in 9 files: 3 files the fork does not ship (the changelog and two e2e specs) and 6 it edited (the icons, `index.html`, the sidebar, `routes/slide.tsx` and the `slide-authoring` skill). Nothing was kept from that trial.
