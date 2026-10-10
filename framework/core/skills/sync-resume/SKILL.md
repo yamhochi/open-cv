@@ -17,7 +17,7 @@ node scripts/resume/slide-to-md.mjs <id> --check
 
 - **In sync** (exit 0): nothing to do. Say so.
 - **Missing Content** (the script says `missing`): the Layout exists with no Content. Create it with `--write`.
-- **No Layout** (`slides/<id>/` is missing): create it by copying the Template folder (`slides/resume` or `slides/cover-letter`) to `slides/<id>/`, give it a new `meta.title`, a fresh `createdAt` and a unique `FONT_LINK_ID`, then run Content to Layout.
+- **No Layout** (the script says `no layout` and exits 3, `slides/<id>/` is missing): create it by copying the Template folder (`slides/resume` or `slides/cover-letter`) to `slides/<id>/`, give it a new `meta.title`, a fresh `createdAt` and a unique `FONT_LINK_ID`, then run Content to Layout.
 - **Drift** (exit 1): continue.
 
 ## 2. Decide the direction
@@ -35,7 +35,15 @@ git diff --stat -- docs/resumes/<id>.md slides/<id>/index.tsx
 | Both, or you cannot tell | **Ask** | Show the diff and ask which side wins. Never overwrite either side blind. |
 | Neither is committed yet (a fresh import) | **Content to Layout** | Content is the newer artefact when it came from `import-resume`. |
 
-## 3. Verify
+## 3. Fill the Pages, then verify
+
+After building or changing a Layout, measure each Page (step 4 of `resume-from-brief`) and set the page breaks from the numbers, not by eye:
+
+- Fill a Page with whole entries and sections. If the next one fits on this Page and still leaves at least 100px of slack, pull it up. A Page with a few hundred pixels spare while the next Page holds a short entry is a bad break.
+- Never split an `Entry` across Pages. Put `Continued` at the bottom of every Page but the last.
+- A section that moves to the next Page keeps its heading. Repeat the section heading with `(continued)` only when an experience list is split.
+
+Then verify:
 
 - Run `--check` again. It must report `in sync`.
 - Run the fit check from step 4 of `resume-from-brief`: open each Page in the dev server and compare `scroll` with `client`. Leave about 100px of slack on every Page.

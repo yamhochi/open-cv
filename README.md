@@ -40,7 +40,9 @@ You can also edit in the editor yourself by double-clicking text. The Markdown i
 
 ### 3. Tailor it to a role
 
-Copy `docs/resume-briefs/example.md` to a new file and fill it in with the job description and the facts you can stand behind. Then say **"tailor my resume for this role"**. The `resume-from-brief` skill writes new Content from the brief, using only your confirmed experience, syncs it into a copy of your Layout under a new id, and checks the fit. Make one copy per role.
+Copy `docs/resume-briefs/example.md` to a new file and fill it in. This is your brief: your instructions for what you want your resume to say, the job description, and the facts you can stand behind. We are not against using AI to write your resume, but it should sound like you and genuinely represent your experience.
+
+Then say **"tailor my resume for this role"**. The `resume-from-brief` skill writes new Content from the brief, using only your confirmed experience and your own wording and tone, syncs it into a copy of your Layout under a new id, and checks the fit. Make one copy per role.
 
 ### 4. Check and export
 

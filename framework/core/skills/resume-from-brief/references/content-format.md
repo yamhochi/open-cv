@@ -40,6 +40,15 @@ email · phone · website · linkedin
 | `**Title**` then `- item` lines (a list in a skills cell) | `BulletCell title` with one `SubBullet` per item |
 | `- [label](https://url)` inside a `BulletCell` | a `SubBullet` holding a `LinkText` (the address stays hidden behind the label) |
 
+Sections:
+
+- Any `##` heading is allowed. The Layout and the Word export tell sections apart by their **shape**, not their title:
+  - contains `###` entries: experience-style entries
+  - contains `**Title**` lines (a body, or a list of items and links): skills-style cells
+  - only `- **Title**: detail` rows: a compact list. Two compact sections in a row sit side by side in two columns.
+- A role whose dates are unknown gets the visible marker `*Dates needed*` (never an invented date), and is flagged to the user.
+- A compact row's text is plain: it cannot hold a link. Put links in a `**Title**` list (a skills-style cell) instead.
+
 Rules:
 
 - One parent level and one child level only. A bold line with no body and no children is not valid: add children or drop the bold.

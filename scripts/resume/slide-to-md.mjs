@@ -30,6 +30,12 @@ if (!id) {
 
 const slidePath = join(repo, 'slides', id, 'index.tsx');
 const mdPath = join(repo, 'docs/resumes', `${id}.md`);
+if (!existsSync(slidePath)) {
+  console.log(
+    `no layout: slides/${id}/index.tsx does not exist. Create it by copying a Template folder (slides/resume or slides/cover-letter) to slides/${id}/, then sync the Content into it (see the sync-resume skill).`,
+  );
+  process.exit(3);
+}
 const ast = parse(readFileSync(slidePath, 'utf8'), {
   sourceType: 'module',
   plugins: ['jsx', 'typescript'],

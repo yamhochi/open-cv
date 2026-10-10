@@ -395,9 +395,20 @@ for (let s = 0; s < sections.length; s++) {
     firstTitle = false;
     return p;
   };
-  const isCompact = (x) => /^(Talks|Education)/.test(x.title);
+  // A section is classified by its shape, not its title, so any heading works:
+  //   ### entries            -> experience-style entries
+  //   **Title** lines        -> skills-style cells (a body, or a list of items and links)
+  //   only `- **T**: d` rows -> a compact list, paired with the next compact section in two columns
+  const shape = (x) => {
+    if (x.title === 'Summary') return 'summary';
+    if (x.rows.some((l) => l.startsWith('### '))) return 'entries';
+    if (x.rows.some((l) => /^\*\*[^*]+\*\*\s*$/.test(l.trim()))) return 'cells';
+    if (x.rows.some((l) => l.startsWith('- '))) return 'compact';
+    return 'entries';
+  };
+  const kind = shape(sec);
 
-  if (sec.title === 'Summary') {
+  if (kind === 'summary') {
     firstTitle = false;
     children.push(
       new Paragraph({
@@ -405,9 +416,9 @@ for (let s = 0; s < sections.length; s++) {
         children: [run(sec.rows.find((l) => l.trim()).trim())],
       }),
     );
-  } else if (sec.title.startsWith('Core skills')) {
+  } else if (kind === 'cells') {
     children.push(t(sec.title), ...skillsGrid(sec));
-  } else if (isCompact(sec) && sections[s + 1] && isCompact(sections[s + 1])) {
+  } else if (kind === 'compact' && sections[s + 1] && shape(sections[s + 1]) === 'compact') {
     const next = sections[++s];
     const colWith = (x) => [
       new Paragraph({
@@ -422,6 +433,8 @@ for (let s = 0; s < sections.length; s++) {
       table([twoCol(colWith(sec), colWith(next))]),
     );
     firstTitle = false;
+  } else if (kind === 'compact') {
+    children.push(t(sec.title), ...compact(sec));
   } else {
     children.push(t(sec.title), ...entries(sec));
   }

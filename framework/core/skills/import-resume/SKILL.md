@@ -31,15 +31,18 @@ Follow [the Content format](../resume-from-brief/references/content-format.md) e
 - Keep the user's wording. Restructure it into the grammar, and fix only obvious typos and inconsistent date formats (use an en dash). Do not rewrite, tighten or improve it. Tailoring is a separate job, done with the `resume-from-brief` skill.
 - Put the name and contact line at the top, from the source.
 - Map each source section to the nearest grammar element: summary, core skills (`SkillCell`), experience (`Entry` with bullets), talks and education (`CompactEntry`), links (`BulletCell`).
+- Any section heading is fine (Volunteering, Languages, Publications): write it as its own `##` section. A list of `Title: detail` rows becomes compact rows. A list of links becomes a `**Title**` list of `- [label](url)` items.
+- Put contact details in the form the format reference shows (for example `linkedin.com/in/name` becomes `in/name`, a bare website has no `https://`).
 - A bullet with a bold lead becomes `- **Lead**: rest` or `- **Lead.** rest`. A sentence with no lead stays a plain bullet. Nested bullets are one level only.
 
 ## 4. Flag what did not fit
 
 List, briefly, anything you could not place cleanly, and say what you did with it:
 
-- sections the grammar has no component for (publications, languages, volunteering): put them under a `CompactEntry` list and say so
-- more than two bullet levels: flattened, say where
-- missing or ambiguous dates, or text you could not read
+- text in a compact row that is really a link (an article URL): it stays plain text there, so say so and offer to move it into a links list
+- more than two bullet levels: fold the deepest level into its parent's sentence (do not drop it), say where
+- missing dates: write the marker `*Dates needed*` and say which role. Never invent a date.
+- ambiguous dates, or text you could not read
 - anything that looks like a fact you would want the user to confirm
 
 ## 5. Hand off

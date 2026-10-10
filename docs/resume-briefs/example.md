@@ -1,8 +1,10 @@
 # Brief: example role
 
-The brief is the only source of facts for a tailored resume. Copy this file to
-`docs/resume-briefs/<id>.md` for each role and fill it in. Anything not written under
-"Confirmed experience" must not appear on the resume.
+The brief is your instructions for what you want your resume to say, and the only source of
+facts for a tailored one. We are not against using AI to write your resume, but it should sound
+like you and genuinely represent your experience. Copy this file to `docs/resume-briefs/<id>.md`
+for each role and fill it in. Anything not written under "Confirmed experience" must not appear
+on the resume.
 
 ## Target role
 

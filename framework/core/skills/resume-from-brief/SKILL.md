@@ -38,6 +38,8 @@ Core skills rules (readability is the point):
 - One claim per sentence, each backed by confirmed experience. Cover the JD's themes across categories without repeating the summary word for word.
 - Experience bullets the user has already approved keep their wording. Tighten only when asked.
 
+Voice: the resume must sound like the person and genuinely represent their experience. Reuse their own wording from the brief and from earlier Content, match the tone the brief describes, and never swap in generic résumé phrasing. If the user asks you to write something new, keep it to what they have confirmed and in their register, and flag it for them to check.
+
 Style: follow the brief's Language register and Style sections. By default write plain, direct prose. Avoid em dashes and buzzwords (for example leverage, seamless, unlock, empower), aim for one sentence per bullet, and never invent metrics.
 
 ## 3. Sync into the Layout
