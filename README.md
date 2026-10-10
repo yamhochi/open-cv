@@ -11,7 +11,7 @@ Built on [open-slide](https://github.com/open-slide/open-slide) by [Yiwei Ho](ht
 You need [Node.js](https://nodejs.org) 20.19+ (or 22.12+) and [pnpm](https://pnpm.io).
 
 ```bash
-git clone <this repo>
+git clone https://github.com/yamhochi/open-cv.git
 cd resume-builder
 pnpm install
 pnpm sync:skills
