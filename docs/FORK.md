@@ -4,11 +4,12 @@ open-cv runs on a local fork of [open-slide](https://github.com/open-slide/open-
 
 ## What changed
 
-- **A4 canvas.** Pages are 794 × 1123 px (A4 portrait at 96 dpi) instead of 1920 × 1080. Thumbnails follow the canvas ratio, and PPTX export uses 96 dpi units so the exported page has the right physical size.
+- **A4 canvas.** Pages are 794 × 1123 px (A4 portrait at 96 dpi) instead of 1920 × 1080. Thumbnails follow the canvas ratio.
 - **Present mode at 100%.** The page is shown at its real size (794px wide), centered, and scrolls when it is taller than the window. Left/right arrows change pages. Up/down, space and page up/down scroll. Mouse-wheel page turning is off.
-- **Speaker notes removed.** The notes drawer, the presenter-view notes panel, the `notes` export, the notes editing endpoint and PPTX notes are gone. The presenter view (current page, next page, timer) remains.
+- **Speaker notes removed.** The notes drawer, the presenter-view notes panel, the `notes` export and the notes editing endpoint are gone. The presenter view (current page, next page, timer) remains.
 - **Renamed interface.** The app is called open-cv. Where upstream says "slide", the interface says "page" for one page and "resumes & cover letters" for the list. The project's own vocabulary is defined in `CONTEXT.md`.
-- **Download button.** The editor toolbar has a labelled "Download" split button next to Present, built the same way. The main button exports a PDF and the chevron opens the full export menu (HTML, PDF, PPTX). It replaces the small icon button that used to sit in the middle of the toolbar.
+- **PPTX export removed.** The Export as PPTX and image PPTX menu items, their command-palette entries, and the code behind them (about 3,600 lines) are gone, because this project exports a resume as PDF, Word or HTML.
+- **Download button.** The editor toolbar has a labelled "Download" split button next to Present, built the same way. The main button exports a PDF and the chevron opens the full export menu (HTML, PDF, Word). It replaces the small icon button that used to sit in the middle of the toolbar.
 - **Export as DOCX.** The Download menu has an Export as DOCX item, and the command palette has a matching entry. The dev server's `/__export-docx/<id>` endpoint runs the project's `scripts/resume/md-to-docx.mjs` on `docs/resumes/<id>.md` and returns the file. Duplicating a template in the editor also copies its Markdown. The same export is available as `pnpm export:docx <slide-id>`.
 - **New icon.** The sidebar logo and favicon are the pixel-art document icon (`framework/core/src/app/assets/logo.svg`, `favicon.svg`, and a 32×32 `favicon.ico` fallback) instead of the open-slide logo.
 - **No in-app update.** The button that ran `pnpm up @open-slide/core` is removed, because it would replace this fork with the published package.

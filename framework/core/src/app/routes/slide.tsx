@@ -5,7 +5,6 @@ import {
   ChevronLeft,
   Download,
   FileCode2,
-  FileImage,
   FileText,
   FileType,
   Link2,
@@ -14,7 +13,6 @@ import {
   MonitorSpeaker,
   MoreHorizontal,
   Play,
-  Presentation,
   Terminal,
 } from 'lucide-react';
 import {
@@ -71,7 +69,7 @@ import { format, useLocale } from '@/lib/use-locale';
 import { useWheelPageNavigation } from '@/lib/use-wheel-page-navigation';
 import { cn } from '@/lib/utils';
 import { SlideCommandMenu } from '../components/command/slide-command-menu';
-import { PdfProgressToast, PptxProgressToast } from '../components/export-progress-toast';
+import { PdfProgressToast } from '../components/export-progress-toast';
 import { OverviewGrid } from '../components/overview-grid';
 import { openPresenterWindow, Player } from '../components/player';
 import { SlideCanvas } from '../components/slide-canvas';
@@ -81,11 +79,6 @@ import { type ThumbnailActions, ThumbnailRail } from '../components/thumbnail-ra
 import { downloadBlob } from '../lib/dom';
 import { exportSlideAsHtml } from '../lib/export-html';
 import { exportSlideAsPdf, isSafari, type PdfExportProgress } from '../lib/export-pdf';
-import {
-  exportSlideAsImagePptx,
-  exportSlideAsPptx,
-  type PptxExportProgress,
-} from '../lib/export-pptx';
 import type { SlideModule } from '../lib/sdk';
 import { usePrefersReducedMotion } from '../lib/use-prefers-reduced-motion';
 import { useSlideModule } from '../lib/use-slide-module';
@@ -559,28 +552,6 @@ export function Slide() {
     });
   };
 
-  const exportPptx = async () => {
-    if (!slide || exporting) return;
-    await runProgressExport<PptxExportProgress>({
-      kind: 'pptx',
-      initial: { phase: 'processing', current: 0, total: pages.length, percent: 0 },
-      failedMessage: t.slide.pptxExportFailed,
-      renderToast: (progress) => <PptxProgressToast progress={progress} />,
-      run: (onProgress) => exportSlideAsPptx(slide, slideId, onProgress),
-    });
-  };
-
-  const exportImagePptx = async () => {
-    if (!slide || exporting) return;
-    await runProgressExport<PptxExportProgress>({
-      kind: 'pptx',
-      initial: { phase: 'processing', current: 0, total: pages.length, percent: 0 },
-      failedMessage: t.slide.imagePptxExportFailed,
-      renderToast: (progress) => <PptxProgressToast progress={progress} />,
-      run: (onProgress) => exportSlideAsImagePptx(slide, slideId, onProgress),
-    });
-  };
-
   const exportDocx = async () => {
     if (!slide || exporting) return;
     setExporting(true);
@@ -617,15 +588,6 @@ export function Slide() {
       <DropdownMenuItem disabled={exporting} onClick={exportDocx}>
         <FileType />
         {t.slide.exportAsDocx}
-      </DropdownMenuItem>
-      <DropdownMenuSeparator />
-      <DropdownMenuItem disabled={exporting} onClick={exportPptx}>
-        <Presentation />
-        {t.slide.exportAsPptx}
-      </DropdownMenuItem>
-      <DropdownMenuItem disabled={exporting} onClick={exportImagePptx}>
-        <FileImage />
-        {t.slide.exportAsImagePptx}
       </DropdownMenuItem>
     </>
   );
@@ -941,9 +903,7 @@ export function Slide() {
                 onToggleDesignPanel: () => setDesignOpen((v) => !v),
                 onExportHtml: exportHtml,
                 onExportPdf: exportPdf,
-                onExportPptx: exportPptx,
                 onExportDocx: exportDocx,
-                onExportImagePptx: exportImagePptx,
                 onGoToPage: goTo,
               }}
             />

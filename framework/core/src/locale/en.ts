@@ -111,12 +111,8 @@ export const en: Locale = {
     toastCopyLinkFailed: 'Failed to copy link',
     exportAsHtml: 'Export as HTML',
     exportAsPdf: 'Export as PDF',
-    exportAsImagePptx: 'Export as image PPTX',
-    exportAsPptx: 'Export as PPTX',
     exportAsDocx: 'Export as DOCX',
     pdfExportFailed: 'PDF export failed',
-    pptxExportFailed: 'PPTX export failed',
-    imagePptxExportFailed: 'PPTX export failed',
     docxExportFailed: 'DOCX export failed',
     pdfExportSafariUnsupported:
       'Export as PDF is not supported on Safari. Please try a Chromium-based browser instead.',
@@ -451,13 +447,6 @@ export const en: Locale = {
     title: 'Exporting PDF',
     processing: 'Processing page {current} of {total}',
     printing: 'Opening print dialog…',
-    done: 'Done',
-  },
-
-  pptxToast: {
-    title: 'Exporting PPTX',
-    processing: 'Rendering page {current} of {total}',
-    generating: 'Building presentation…',
     done: 'Done',
   },
 

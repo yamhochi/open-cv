@@ -113,12 +113,8 @@ export type Locale = {
     toastCopyLinkFailed: string;
     exportAsHtml: string;
     exportAsPdf: string;
-    exportAsImagePptx: string;
-    exportAsPptx: string;
     exportAsDocx: string;
     pdfExportFailed: string;
-    pptxExportFailed: string;
-    imagePptxExportFailed: string;
     docxExportFailed: string;
     pdfExportSafariUnsupported: string;
     present: string;
@@ -476,14 +472,6 @@ export type Locale = {
     /** template: "Processing page {current} of {total}" */
     processing: string;
     printing: string;
-    done: string;
-  };
-
-  pptxToast: {
-    title: string;
-    /** template: "Rendering page {current} of {total}" */
-    processing: string;
-    generating: string;
     done: string;
   };
 

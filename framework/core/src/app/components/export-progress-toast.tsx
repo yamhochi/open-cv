@@ -2,7 +2,6 @@ import { Check, Loader2 } from 'lucide-react';
 import { format, useLocale } from '@/lib/use-locale';
 import { pad2 } from '@/lib/utils';
 import type { PdfExportProgress } from '../lib/export-pdf';
-import type { PptxExportProgress } from '../lib/export-pptx';
 import { Progress } from './ui/progress';
 
 function ExportProgressToast({
@@ -53,25 +52,6 @@ export function PdfProgressToast({ progress }: { progress: PdfExportProgress }) 
   return (
     <ExportProgressToast
       title={t.pdfToast.title}
-      text={text}
-      done={progress.phase === 'done'}
-      percent={progress.percent}
-    />
-  );
-}
-
-export function PptxProgressToast({ progress }: { progress: PptxExportProgress }) {
-  const t = useLocale();
-  const text =
-    progress.phase === 'processing'
-      ? format(t.pptxToast.processing, pageCounts(progress))
-      : progress.phase === 'generating'
-        ? t.pptxToast.generating
-        : t.pptxToast.done;
-
-  return (
-    <ExportProgressToast
-      title={t.pptxToast.title}
       text={text}
       done={progress.phase === 'done'}
       percent={progress.percent}

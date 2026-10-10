@@ -1,6 +1,6 @@
 # open-cv
 
-A resume, as code. Your resume is a React component rendered onto a fixed **A4 page (794 × 1123 px)**, so layout, spacing and print output are exact instead of fighting a Word template. Edit it in a live visual editor, or hand it to a coding agent.
+open-cv is a resume and cover letter builder. Each document is a React component rendered onto a fixed **A4 page (794 × 1123 px)**, so layout, spacing and print output are exact instead of fighting a Word template. You paste in the resume you already have and a coding agent turns it into a Markdown file and a laid-out page, then keeps the two in step as you edit in the visual editor or in chat. It exports to PDF, Word and HTML.
 
 ![open-cv editor showing a two-page A4 resume template](docs/screenshot.png)
 
@@ -38,22 +38,25 @@ Ask for changes in plain language: "shorten the summary", "put the second role o
 
 You can also edit in the editor yourself by double-clicking text. The Markdown is then out of date, which the project calls **Drift**. Say **"sync"** and `sync-resume` finds which side changed and brings the other into line. It asks you before overwriting anything if both changed.
 
-### 3. Tailor it to a role
+Only use facts that you can stand behind.
 
-Copy `docs/resume-briefs/example.md` to a new file and fill it in. This is your brief: your instructions for what you want your resume to say, the job description, and the facts you can stand behind. We are not against using AI to write your resume, but it should sound like you and genuinely represent your experience.
+### 3. Comment on the layout
 
-Then say **"tailor my resume for this role"**. The `resume-from-brief` skill writes new Content from the brief, using only your confirmed experience and your own wording and tone, syncs it into a copy of your Layout under a new id, and checks the fit. Make one copy per role.
+For layout and styling changes, leave a comment instead of describing the change in chat. In the editor, click an element on the page, open **Comment** in the Format panel, describe the change ("make this heading smaller", "more space above this section", "keep these two columns level") and add it. Leave as many as you like, then say **"apply comments"** (or run `/apply-comments`). The `apply-comments` skill makes the changes to the Layout and clears the comments.
+
+Comments are there to help with the layout. They are not for writing your resume.
 
 ### 4. Check and export
 
-- **Download** in the editor toolbar exports a PDF. The menu also has HTML, PPTX and Word. PDF export needs a Chromium-based browser.
+- **Download** in the editor toolbar exports a PDF. The menu also has Word and HTML. PDF export needs a Chromium-based browser.
+- **ATS ready.** The PDF and Word files are built to be read by applicant tracking systems: real selectable text in a clean reading order, fonts embedded, and bullets drawn as shapes so they add no stray characters.
 - The PDF comes from the Layout, and the Word file comes from the Content, so run a sync first if you have edited in the editor. `pnpm resume:check <id>` tells you whether they match.
 
 | You say | Skill | What it does |
 | --- | --- | --- |
 | "import my resume" | `import-resume` | Pasted or file resume in, Content out, then a sync. |
 | "sync" or "I edited it in the editor" | `sync-resume` | Finds the side that changed and updates the other. |
-| "tailor it for this role" | `resume-from-brief` | Brief to Content to Layout, with a fit check. |
+| "apply comments" | `apply-comments` | Makes the layout changes you left as comments in the editor. |
 
 Everything else is ordinary chat: "move this", "reword that", "add a link".
 

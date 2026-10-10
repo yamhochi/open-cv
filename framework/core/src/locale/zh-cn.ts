@@ -110,12 +110,8 @@ export const zhCN: Locale = {
     toastCopyLinkFailed: '复制链接失败',
     exportAsHtml: '导出为 HTML',
     exportAsPdf: '导出为 PDF',
-    exportAsImagePptx: '导出图片 PPTX',
-    exportAsPptx: '导出 PPTX',
     exportAsDocx: '导出为 DOCX',
     pdfExportFailed: 'PDF 导出失败',
-    pptxExportFailed: 'PPTX 导出失败',
-    imagePptxExportFailed: 'PPTX 导出失败',
     docxExportFailed: 'DOCX 导出失败',
     pdfExportSafariUnsupported:
       '导出 PDF 目前不支持 Safari 设备，请尝试使用基于 Chromium 的浏览器替代。',
@@ -448,13 +444,6 @@ export const zhCN: Locale = {
     title: '导出 PDF',
     processing: '正在处理第 {current} / {total} 页',
     printing: '正在打开打印对话框…',
-    done: '完成',
-  },
-
-  pptxToast: {
-    title: '导出 PPTX',
-    processing: '正在渲染第 {current} / {total} 页',
-    generating: '正在组合演示文稿…',
     done: '完成',
   },
 

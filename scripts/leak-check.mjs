@@ -41,7 +41,7 @@ const GENERIC = new Set(
   figma react typescript javascript css html node pnpm npm git github claude markdown
   docx pdf pptx inter google australia sydney melbourne
   jan feb mar apr jun jul aug sep sept oct nov dec
-  api apis app apps english json url urls ui ux seo ai llm sql aws gcp http https svg png yaml`.split(/\s+/),
+  api apis app apps english json url urls ui ux seo ai llm sql aws gcp http https svg png yaml ats`.split(/\s+/),
 );
 
 // Hosts that are safe in a public template, so they are never treated as private.
