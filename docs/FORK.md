@@ -19,40 +19,43 @@ Internal names are unchanged (`slides/`, `SlideModule`, `@open-slide/core`, `dat
 
 | Area | Location |
 | --- | --- |
-| Framework source (thumbnails, present mode, PPTX units, UI text) | `framework/core/src/` |
-| Built framework files | `framework/core/dist/`, edited by `scripts/patch-framework-dist.mjs` |
+| Framework source (editor UI, dev server, export) | `framework/core/src/` |
+| Built framework files | `framework/core/dist/`, built from source by `pnpm install` and not committed |
 | Authoring skills | `framework/core/skills/` |
-| Unmodified upstream copy | git tag `upstream-2.0.1` |
+| Unmodified upstream copy | git tag `upstream-src-2.0.1` |
 
 To see exactly what the fork changed, diff against the tag:
 
 ```bash
-git diff upstream-2.0.1 HEAD -- framework/core/src framework/core/skills
+git diff upstream-src-2.0.1 HEAD -- framework/core/src framework/core/skills
 ```
+
+## Building
+
+`framework/core/` is a normal source package, the same layout as upstream's `packages/core`. `pnpm install` builds it (`tsdown`, about a second) through the root `prepare` script, so `framework/core/dist/` always matches the source. To rebuild after editing the framework: `pnpm --filter @open-slide/core build`, then restart `pnpm dev`.
+
+The source matches upstream 2.0.1 exactly except for the changes listed above. As a check, upstream's 2.0.1 source builds byte for byte to the `dist` that npm publishes.
 
 ## Updating from upstream
 
-Don't run `pnpm up @open-slide/core`. It would replace the local fork with the npm package and undo the changes above. The unmodified 2.0.1 copy is committed and tagged `upstream-2.0.1`, so git can merge a newer release against it:
+Don't run `pnpm up @open-slide/core`. It would replace the local fork with the npm package and undo the changes above. Two git references make an update an ordinary merge:
+
+- `upstream-src-2.0.1` is upstream's 2.0.1 `packages/core`, unmodified, and is an ancestor of this branch.
+- The same tag layout is used for each later release you take.
 
 ```bash
 # 1. Put the new upstream release on its own branch, starting from the baseline
-git switch -c upstream-X.Y.Z upstream-2.0.1
-npm pack @open-slide/core@X.Y.Z && tar -xzf open-slide-core-X.Y.Z.tgz
-rsync -a --delete --exclude node_modules package/ framework/core/
-git add -A && git commit -m "Vendor @open-slide/core X.Y.Z unmodified" && git tag upstream-X.Y.Z
-rm -rf package open-slide-core-X.Y.Z.tgz
+git switch -c upstream-src-X.Y.Z upstream-src-2.0.1
+git clone --depth 1 --branch "@open-slide/core@X.Y.Z" https://github.com/open-slide/open-slide.git /tmp/open-slide-X.Y.Z
+rsync -a --delete --exclude node_modules --exclude dist /tmp/open-slide-X.Y.Z/packages/core/ framework/core/
+git add -A && git commit -m "Vendor @open-slide/core X.Y.Z unmodified" && git tag upstream-src-X.Y.Z
 
-# 2. Merge it into your branch, then re-apply the changes to the built files
+# 2. Merge it into your branch and resolve any conflicts in framework/core/src and skills/
 git switch master
-git merge upstream-X.Y.Z          # will conflict in dist/ (hashed names); resolve src/ and skills/ by hand
-git rm -rq framework/core/dist && git checkout upstream-X.Y.Z -- framework/core/dist
-node scripts/patch-framework-dist.mjs
-git add -A && git commit           # finish the merge
+git merge upstream-src-X.Y.Z
 
-# 3. Reinstall and check
+# 3. Rebuild and check
 pnpm install && pnpm sync:skills && pnpm dev
 ```
 
-`framework/core/dist/` is compiled output with hashed file names, so git can't merge it. Step 2 takes the new upstream `dist` and `scripts/patch-framework-dist.mjs` re-applies the fork's edits: A4 canvas, no speaker notes, disabled update button, and the "template" wording. The script fails loudly if upstream changed something it relies on. If it does, fix the script and re-run it on a fresh copy.
-
-The `src/` changes (thumbnails, present mode, PPTX units, the removed notes UI) come through the git merge, so check them in the merge diff. This flow has not been run against a real newer release yet.
+Conflicts show up only where upstream changed lines this fork also changed. This flow has not been run against a real newer release yet.

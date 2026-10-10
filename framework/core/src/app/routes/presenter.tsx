@@ -1,6 +1,4 @@
 import {
-  AArrowDown,
-  AArrowUp,
   Check,
   ChevronDown,
   ChevronLeft,

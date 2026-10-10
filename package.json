@@ -9,7 +9,8 @@
     "preview": "open-slide preview",
     "sync:skills": "open-slide sync:skills",
     "resume:md": "node scripts/resume/slide-to-md.mjs",
-    "export:docx": "node scripts/resume/md-to-docx.mjs"
+    "export:docx": "node scripts/resume/md-to-docx.mjs",
+    "prepare": "pnpm --filter @open-slide/core build"
   },
   "dependencies": {
     "@open-slide/core": "workspace:*",
