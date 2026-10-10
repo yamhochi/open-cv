@@ -1,12 +1,14 @@
 #!/usr/bin/env node
 // Leak check: stops personal content from a private source repo reaching this public repo.
 //
-//   node scripts/leak-check.mjs [--source <dir>] [--all | --staged] [--message <file>] [--reveal]
+//   node scripts/leak-check.mjs [--source <dir>] [--all | --staged | --history] [--message <file>] [--reveal]
 //
 // The term list is built at run time from the private source's resume and brief files and is
 // never written anywhere. By default it scans what you are about to commit: added lines in
 // `git diff HEAD` plus untracked files, and the names of those files. Use --all to scan every
 // tracked file, --staged for the index only, and --message to scan a commit message file.
+// --history scans every commit on every branch and tag: added lines, file names, commit
+// messages, and author names and emails. Binary files cannot be scanned.
 //
 // What it flags (all derived from the private files):
 //   email    email addresses
@@ -173,12 +175,66 @@ function parseArgs(argv) {
     if (a === '--source') args.source = argv[++i];
     else if (a === '--all') args.mode = 'all';
     else if (a === '--staged') args.mode = 'staged';
+    else if (a === '--history') args.mode = 'history';
     else if (a === '--message') args.message = argv[++i];
     else if (a === '--reveal') args.reveal = true;
     else if (a === '-h' || a === '--help') args.help = true;
     else throw new Error(`Unknown argument: ${a}`);
   }
   return args;
+}
+
+
+// Scan the whole history: every commit's message, author, file names and added lines.
+function scanHistory(repo, matcher, reveal) {
+  let count = 0;
+  const report = (where, kind, value) => {
+    count++;
+    console.log(`${where}  ${kind}  ${value}`);
+  };
+  const scan = (where, text, lineNos) => {
+    for (const f of scanText(text, matcher, reveal)) report(`${where}${lineNos ? `:${lineNos[f.line - 1]}` : ''}`, f.kind, f.value);
+  };
+  // Messages and authors.
+  const meta = git(['log', '--all', '--format=%H%x1f%an%x1f%ae%x1f%cn%x1f%ce%x1f%B%x1e'], repo);
+  let commits = 0;
+  for (const rec of meta.split('\x1e')) {
+    if (!rec.trim()) continue;
+    commits++;
+    const [sha, an, ae, cn, ce, body] = rec.trim().split('\x1f');
+    const short = sha.slice(0, 7);
+    scan(`${short} (message)`, body ?? '');
+    scan(`${short} (author)`, `${an} ${ae} ${cn} ${ce}`);
+  }
+  // File names.
+  for (const line of git(['log', '--all', '--name-only', '--format=@@@%H'], repo).split('\n')) {
+    if (line.startsWith('@@@')) continue;
+    if (line) scan(`(file name) ${line}`, line);
+  }
+  // Added lines.
+  const diff = git(['log', '--all', '-p', '-U0', '--no-color', '--no-renames', '--format=@@@%H'], repo);
+  let sha = '';
+  let file = '';
+  let lineNo = 0;
+  const batches = new Map();
+  for (const l of diff.split('\n')) {
+    if (l.startsWith('@@@')) sha = l.slice(3, 10);
+    else if (l.startsWith('+++ b/')) file = l.slice(6);
+    else if (l.startsWith('+++ ')) file = '';
+    else if (l.startsWith('@@')) lineNo = Number(/\+(\d+)/.exec(l)?.[1] ?? 0) - 1;
+    else if (l.startsWith('+') && file) {
+      lineNo++;
+      const key = `${sha} ${file}`;
+      (batches.get(key) ?? batches.set(key, []).get(key)).push([lineNo, l.slice(1)]);
+    }
+  }
+  for (const [key, ls] of batches) scan(key, ls.map(([, t]) => t).join('\n'), ls.map(([n]) => n));
+  console.error(
+    count === 0
+      ? `leak-check: history clean (${commits} commits, all branches and tags).`
+      : `leak-check: ${count} finding(s) in history. Do not push until each is removed or confirmed public.`,
+  );
+  return count === 0 ? 0 : 1;
 }
 
 function main() {
@@ -197,6 +253,8 @@ function main() {
   const dictionary = loadDictionary();
   if (!dictionary) console.error(`leak-check: ${DICTIONARY} not found, so the "term" rule is skipped.`);
   const matcher = buildTerms(sourceFiles.map((f) => readFileSync(f, 'utf8')), dictionary);
+
+  if (args.mode === 'history') return scanHistory(repo, matcher, args.reveal);
 
   // Collect targets: [label, text] pairs. For diffs, only added lines are scanned.
   const targets = [];
