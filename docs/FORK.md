@@ -31,6 +31,10 @@ To see exactly what the fork changed, diff against the tag:
 git diff upstream-src-2.0.1 HEAD -- framework/core/src framework/core/skills
 ```
 
+## The package name
+
+`framework/core/` keeps the package name `@open-slide/core`. That is for compatibility and as an homage, not because this project depends on open-slide. In `package.json` the name is `workspace:*`, so it resolves to the local folder and nothing is fetched from npm. Keeping the name means slides, themes, the authoring skills and the framework's own import checks all keep working without changes. If you ever publish it, use an npm alias (for example `"@open-slide/core": "npm:@yourname/open-cv-core@1"`) rather than renaming the imports.
+
 ## Building
 
 `framework/core/` is a normal source package, the same layout as upstream's `packages/core`. `pnpm install` builds it (`tsdown`, about a second) through the root `prepare` script, so `framework/core/dist/` always matches the source. To rebuild after editing the framework: `pnpm --filter @open-slide/core build`, then restart `pnpm dev`.
