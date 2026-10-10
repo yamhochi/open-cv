@@ -31,7 +31,7 @@ export const zhCN: Locale = {
   },
 
   home: {
-    appTitle: 'resume-builder',
+    appTitle: 'open-cv',
     draft: '草稿',
     duplicate: '复制',
     themes: '主题',
@@ -41,7 +41,7 @@ export const zhCN: Locale = {
     menu: '菜单',
     newFolder: '新建文件夹',
     folderName: '文件夹名称',
-    updateAvailable: 'resume-builder {version} 已发布',
+    updateAvailable: 'open-cv {version} 已发布',
     updatePackage: '更新',
     updatingPackage: '更新中',
     updatePackageDone: '已更新。请重启 dev server 以使用新版本。',

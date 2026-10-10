@@ -1,8 +1,8 @@
-# resume-builder
+# open-cv
 
 A resume, as code. Your resume is a React component rendered onto a fixed **A4 page (794 × 1123 px)**, so layout, spacing and print output are exact instead of fighting a Word template. Edit it in a live visual editor, or hand it to a coding agent.
 
-![resume-builder editor showing a two-page A4 resume template](docs/screenshot.png)
+![open-cv editor showing a two-page A4 resume template](docs/screenshot.png)
 
 Built on [open-slide](https://github.com/open-slide/open-slide) by [Yiwei Ho](https://github.com/1weiho), adapted here for documents. See [how this differs from open-slide](docs/FORK.md).
 
@@ -12,7 +12,7 @@ You need [Node.js](https://nodejs.org) 20.19+ (or 22.12+) and [pnpm](https://pnp
 
 ```bash
 git clone https://github.com/yamhochi/open-cv.git
-cd resume-builder
+cd open-cv
 pnpm install
 pnpm sync:skills
 pnpm dev

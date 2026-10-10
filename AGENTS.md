@@ -1,4 +1,4 @@
-# resume-builder — Agent Guide
+# open-cv — Agent Guide
 
 This repo builds a resume and its cover letter, authored as open-slide documents under `slides/resume/` and `slides/cover-letter/`. A tailored version of either is a copy of its folder under a new id (see the `resume-from-brief` skill).
 

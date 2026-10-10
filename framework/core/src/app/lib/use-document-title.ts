@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-export const DEFAULT_DOCUMENT_TITLE = 'resume-builder';
+export const DEFAULT_DOCUMENT_TITLE = 'open-cv';
 
 export function resolveDocumentTitle(title?: string): string {
   return title?.trim() || DEFAULT_DOCUMENT_TITLE;

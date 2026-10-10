@@ -31,7 +31,7 @@ export const en: Locale = {
   },
 
   home: {
-    appTitle: 'resume-builder',
+    appTitle: 'open-cv',
     draft: 'Draft',
     duplicate: 'Duplicate',
     themes: 'Themes',
@@ -41,7 +41,7 @@ export const en: Locale = {
     menu: 'Menu',
     newFolder: 'New folder',
     folderName: 'Folder name',
-    updateAvailable: 'resume-builder {version} is available',
+    updateAvailable: 'open-cv {version} is available',
     updatePackage: 'Update',
     updatingPackage: 'Updating',
     updatePackageDone: 'Updated. Restart the dev server to use the new version.',

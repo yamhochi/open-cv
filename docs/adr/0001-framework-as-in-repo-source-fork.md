@@ -4,7 +4,7 @@ status: accepted
 
 # Keep the framework as an in-repo source fork under its original package name
 
-The resume builder needs changes that open-slide's configuration cannot express (an A4 canvas, a different present mode, no speaker notes, a Word export), so it runs on a copy of open-slide's source in `framework/core/`, built on install, instead of the published `@open-slide/core` package. The package keeps its original name so slides, themes, skills and the framework's own import checks work unchanged.
+open-cv needs changes that open-slide's configuration cannot express (an A4 canvas, a different present mode, no speaker notes, a Word export), so it runs on a copy of open-slide's source in `framework/core/`, built on install, instead of the published `@open-slide/core` package. The package keeps its original name so slides, themes, skills and the framework's own import checks work unchanged.
 
 ## Considered options
 

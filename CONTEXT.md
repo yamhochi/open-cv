@@ -1,4 +1,4 @@
-# resume-builder
+# open-cv
 
 A tool for writing a resume and cover letter as code on A4 pages, tailoring them to roles, and exporting them. This glossary covers the language of using it. Words for maintaining the framework underneath it are not defined here.
 
