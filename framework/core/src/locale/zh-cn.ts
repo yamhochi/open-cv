@@ -112,9 +112,11 @@ export const zhCN: Locale = {
     exportAsPdf: '导出为 PDF',
     exportAsImagePptx: '导出图片 PPTX',
     exportAsPptx: '导出 PPTX',
+    exportAsDocx: '导出为 DOCX',
     pdfExportFailed: 'PDF 导出失败',
     pptxExportFailed: 'PPTX 导出失败',
     imagePptxExportFailed: 'PPTX 导出失败',
+    docxExportFailed: 'DOCX 导出失败',
     pdfExportSafariUnsupported:
       '导出 PDF 目前不支持 Safari 设备，请尝试使用基于 Chromium 的浏览器替代。',
     present: '演示',

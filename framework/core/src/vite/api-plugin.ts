@@ -3,6 +3,7 @@ import { registerAssetRoutes } from './routes/assets.ts';
 import { registerCommentRoutes } from './routes/comments.ts';
 import { type ApiPluginOptions, makeContext } from './routes/context.ts';
 import { registerEditRoutes } from './routes/edit.ts';
+import { registerExportDocxRoutes } from './routes/export-docx.ts';
 import { registerFolderRoutes } from './routes/folders.ts';
 import { registerGfontsRoutes } from './routes/gfonts.ts';
 import { registerRestartRoutes } from './routes/restart.ts';
@@ -24,6 +25,7 @@ export function apiPlugin(opts: ApiPluginOptions): Plugin {
       registerCommentRoutes(server, ctx);
       registerSlideRoutes(server, ctx);
       registerAssetRoutes(server, ctx);
+      registerExportDocxRoutes(server, ctx);
       registerSvglRoutes(server);
       registerGfontsRoutes(server);
       registerFolderRoutes(server, ctx);

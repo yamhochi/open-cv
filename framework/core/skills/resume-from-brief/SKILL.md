@@ -13,7 +13,7 @@ One role, three artefacts. The default order is brief, then Markdown, then slide
 | 2. Resume (content) | `docs/resumes/<id>.md` | The words. Source of truth for the slide. Reviewed and edited by the user. |
 | 3. Slide (render) | `slides/<slide-id>/index.tsx` | Layout only. Text is copied from stage 2, never invented here. |
 
-**Every resume slide has a Markdown file in `docs/resumes/<slide-id>.md`.** The Word export (`pnpm export:docx`) needs it, and `slide-to-md.mjs --check` fails when it is missing. For a new slide, create the Markdown straight away with `node scripts/resume/slide-to-md.mjs <slide-id> --write`.
+**Every resume slide has a Markdown file in `docs/resumes/<slide-id>.md`.** The Word export needs it (the editor's Export as DOCX item or `pnpm export:docx`), and `slide-to-md.mjs --check` fails when it is missing. Duplicating a template in the editor copies its Markdown too, with `slide:` updated. For a slide made any other way, create the Markdown straight away with `node scripts/resume/slide-to-md.mjs <slide-id> --write`.
 
 Stage 2 carries front matter (`slide:` and `brief:`) so the three files stay linked. For a new role, copy the closest existing slide's folder under `slides/` and its Markdown, give it a new kebab-case id, a new `meta.title`, a fresh `createdAt` (`node -e "console.log(new Date().toISOString())"`) and a unique `FONT_LINK_ID`, then follow the flow.
 
@@ -139,6 +139,8 @@ Anything the slide edit introduced that is not in the brief's confirmed experien
 ## Export to Word
 
 `.docx` files are built on demand from the Markdown and are not stored in the repo (`docs/resumes/*.docx` is git-ignored). Do not commit them or regenerate them after edits.
+
+In the editor, open the Download menu and choose Export as DOCX. From the terminal:
 
 ```bash
 pnpm export:docx <slide-id> [out.docx]

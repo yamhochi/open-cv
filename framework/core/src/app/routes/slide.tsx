@@ -7,6 +7,7 @@ import {
   FileCode2,
   FileImage,
   FileText,
+  FileType,
   Link2,
   Loader2,
   Maximize,
@@ -77,6 +78,7 @@ import { SlideCanvas } from '../components/slide-canvas';
 import { isDeckWarmed, markDeckWarmed, SlidePreloadLayer } from '../components/slide-preload-layer';
 import { SlideTransitionLayer } from '../components/slide-transition-layer';
 import { type ThumbnailActions, ThumbnailRail } from '../components/thumbnail-rail';
+import { downloadBlob } from '../lib/dom';
 import { exportSlideAsHtml } from '../lib/export-html';
 import { exportSlideAsPdf, isSafari, type PdfExportProgress } from '../lib/export-pdf';
 import {
@@ -579,6 +581,29 @@ export function Slide() {
     });
   };
 
+  const exportDocx = async () => {
+    if (!slide || exporting) return;
+    setExporting(true);
+    try {
+      const res = await fetch(`/__export-docx/${encodeURIComponent(slideId)}`);
+      if (!res.ok) {
+        const body = (await res.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(body?.error ?? res.statusText);
+      }
+      downloadBlob(await res.blob(), `${slideId}.docx`);
+    } catch (err) {
+      console.error('[open-slide] docx export failed', err);
+      toast.error(
+        err instanceof Error
+          ? `${t.slide.docxExportFailed}: ${err.message}`
+          : t.slide.docxExportFailed,
+        { duration: 5000 },
+      );
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const exportMenuItems = (
     <>
       <DropdownMenuItem disabled={exporting} onClick={exportHtml}>
@@ -588,6 +613,10 @@ export function Slide() {
       <DropdownMenuItem disabled={exporting} onClick={exportPdf}>
         <FileText />
         {t.slide.exportAsPdf}
+      </DropdownMenuItem>
+      <DropdownMenuItem disabled={exporting} onClick={exportDocx}>
+        <FileType />
+        {t.slide.exportAsDocx}
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem disabled={exporting} onClick={exportPptx}>
@@ -913,6 +942,7 @@ export function Slide() {
                 onExportHtml: exportHtml,
                 onExportPdf: exportPdf,
                 onExportPptx: exportPptx,
+                onExportDocx: exportDocx,
                 onExportImagePptx: exportImagePptx,
                 onGoToPage: goTo,
               }}

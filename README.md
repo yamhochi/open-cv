@@ -29,7 +29,7 @@ When it's ready, export from the Download button in the editor toolbar. PDF expo
 
 To tailor the resume to a role, write a brief (start from `docs/resume-briefs/example.md`), then ask your agent to use the `resume-from-brief` skill. It writes the words into `docs/resumes/<id>.md`, syncs them into the slide, and keeps the two matching. Edits you make on the slide can be pulled back into the Markdown with `node scripts/resume/slide-to-md.mjs <id> --write`.
 
-For a Word file, run `pnpm export:docx <slide-id>`. It builds the `.docx` from the Markdown, and the files are git-ignored.
+For a Word file, choose Export as DOCX in the Download menu, or run `pnpm export:docx <slide-id>`. Either builds the `.docx` from the Markdown, and the files are git-ignored.
 
 ## Scripts
 

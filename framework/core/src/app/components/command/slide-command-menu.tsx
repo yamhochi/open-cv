@@ -4,6 +4,7 @@ import {
   FileCode2,
   FileImage,
   FileText,
+  FileType,
   Grid2x2,
   Link2,
   Maximize,
@@ -29,6 +30,7 @@ export type SlideCommandHandlers = {
   onExportHtml: () => void;
   onExportPdf: () => void;
   onExportPptx: () => void;
+  onExportDocx: () => void;
   onExportImagePptx: () => void;
   onGoToPage: (index: number) => void;
 };
@@ -133,6 +135,14 @@ export function SlideCommandMenu({
             keywords: ['export', 'pdf', 'download', 'print'],
             disabled: exporting,
             run: handlers.onExportPdf,
+          },
+          {
+            id: 'export-docx',
+            label: t.slide.exportAsDocx,
+            icon: <FileType />,
+            keywords: ['export', 'docx', 'word', 'download', 'resume'],
+            disabled: exporting,
+            run: handlers.onExportDocx,
           },
           {
             id: 'export-pptx',

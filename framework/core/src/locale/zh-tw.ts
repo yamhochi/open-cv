@@ -112,9 +112,11 @@ export const zhTW: Locale = {
     exportAsPdf: '匯出為 PDF',
     exportAsImagePptx: '匯出圖片 PPTX',
     exportAsPptx: '匯出 PPTX',
+    exportAsDocx: '匯出為 DOCX',
     pdfExportFailed: 'PDF 匯出失敗',
     pptxExportFailed: 'PPTX 匯出失敗',
     imagePptxExportFailed: 'PPTX 匯出失敗',
+    docxExportFailed: 'DOCX 匯出失敗',
     pdfExportSafariUnsupported:
       '匯出 PDF 目前不支援 Safari 裝置，請嘗試用 Chromium 基底瀏覽器替代。',
     present: '簡報',
