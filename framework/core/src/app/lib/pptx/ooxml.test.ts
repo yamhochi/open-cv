@@ -131,19 +131,19 @@ describe('buildPptxFiles', () => {
     expect(slide).toContain(
       '<p:bg><p:bgPr><a:solidFill><a:srgbClr val="F7F5F0"></a:srgbClr></a:solidFill>',
     );
-    expect(slide).toContain('<a:off x="635000" y="635000"/><a:ext cx="2540000" cy="1270000"/>');
+    expect(slide).toContain('<a:off x="952500" y="952500"/><a:ext cx="3810000" cy="1905000"/>');
     expect(slide).toContain(
       '<a:prstGeom prst="roundRect"><a:avLst><a:gd name="adj" fmla="val 12000"/>',
     );
     expect(slide).toContain('<a:lin ang="0" scaled="0"/>');
     expect(slide).toContain('<a:alpha val="50000"/>');
     expect(slide).toContain('<a:prstDash val="dash"/>');
-    expect(slide).toContain('<a:outerShdw blurRad="190500" dist="63500" dir="5400000"');
+    expect(slide).toContain('<a:outerShdw blurRad="285750" dist="95250" dir="5400000"');
     expect(slide).toContain('<a:xfrm rot="21420000">');
-    expect(slide).toContain('<a:lnSpc><a:spcPts val="3200"/></a:lnSpc>');
-    expect(slide).toContain('marL="127000" indent="-127000" algn="ctr"');
+    expect(slide).toContain('<a:lnSpc><a:spcPts val="4800"/></a:lnSpc>');
+    expect(slide).toContain('marL="190500" indent="-190500" algn="ctr"');
     expect(slide).toContain('<a:buChar char="•"/>');
-    expect(slide).toContain('sz="2000" b="1" spc="-40" dirty="0"');
+    expect(slide).toContain('sz="3000" b="1" spc="-60" dirty="0"');
     expect(slide).toContain('<a:t>Hello &lt;world&gt; &amp; &quot;friends&quot;</a:t>');
     expect(slide.match(/<a:br>/g)).toHaveLength(2);
     expect(slide).toContain('<a:latin typeface="Inter"/><a:ea typeface="Inter"/>');
@@ -165,7 +165,7 @@ describe('buildPptxFiles', () => {
       },
       { x: 0, y: 0, w: 100, h: 50 },
     );
-    expect(xml).toContain('<a:path w="635000" h="317500">');
+    expect(xml).toContain('<a:path w="952500" h="476250">');
     expect(xml.match(/<a:arcTo /g)).toHaveLength(2);
     expect(xml).toContain('stAng="10800000"');
     expect(xml).toContain('stAng="0"');
