@@ -13,7 +13,7 @@ open-cv started as a fork of open-slide, which is built for presentations. The e
 - **Documents, not slides.** Pages are A4 portrait (794 × 1123 px) instead of 16:9, and a resume or cover letter is a few Pages in a row. Present mode shows a Page at full size and scrolls, like reading a document.
 - **Layout and content content kept in sync.** Each document has its words as Markdown (the Content) and its look as a page file (the Layout). Skills import a resume you already have, sync the two, and tell you when they have drifted apart.
 - **Exports for job applications.** The PDF and Word files are ATS ready. The Word export is new and is built from the Content. PowerPoint export and speaker notes are removed, because a resume doesn't need them.
-- **Agent skills written for resumes.** The instructions your coding agent follows describe a document page (type sizes, spacing, how bullets are built) and resume jobs (import, sync, apply layout comments), instead of building a deck. The model itself is unchanged. The skills guide it.
+- **Agent skills written for a4 documents.** The instructions your coding agent follows describe a document page (type sizes, spacing, how bullets are built) and content (import, sync, apply layout comments), instead of building a deck. The model itself is unchanged. The skills guide it.
 
 The full list, and how to take updates from open-slide, is in [docs/FORK.md](docs/FORK.md).
 
