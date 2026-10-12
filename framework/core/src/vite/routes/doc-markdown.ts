@@ -2,10 +2,10 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 // The Word exporter lives in the project, not in this package, so it can follow the project's
-// resume design: scripts/resume/md-to-docx.mjs reads docs/resumes/<id>.md.
-const SCRIPT = path.join('scripts', 'resume', 'md-to-docx.mjs');
+// document design: scripts/doc/md-to-docx.mjs reads docs/content/<id>.md.
+const SCRIPT = path.join('scripts', 'doc', 'md-to-docx.mjs');
 
-export async function findResumeScript(from: string): Promise<string | null> {
+export async function findDocScript(from: string): Promise<string | null> {
   let dir = from;
   for (;;) {
     const candidate = path.join(dir, SCRIPT);
@@ -19,27 +19,27 @@ export async function findResumeScript(from: string): Promise<string | null> {
   }
 }
 
-export const resumeRootOf = (script: string): string => path.resolve(path.dirname(script), '../..');
+export const docRootOf = (script: string): string => path.resolve(path.dirname(script), '../..');
 
-export const resumeMarkdownPath = (root: string, slideId: string): string =>
-  path.join(root, 'docs', 'resumes', `${slideId}.md`);
+export const docMarkdownPath = (root: string, slideId: string): string =>
+  path.join(root, 'docs', 'content', `${slideId}.md`);
 
 // Duplicating a slide also copies its Markdown, so the copy keeps a source of truth.
-export async function copyResumeMarkdown(
+export async function copyDocMarkdown(
   userCwd: string,
   fromId: string,
   toId: string,
 ): Promise<void> {
-  const script = await findResumeScript(userCwd);
+  const script = await findDocScript(userCwd);
   if (!script) return;
-  const root = resumeRootOf(script);
+  const root = docRootOf(script);
   let source: string;
   try {
-    source = await fs.readFile(resumeMarkdownPath(root, fromId), 'utf8');
+    source = await fs.readFile(docMarkdownPath(root, fromId), 'utf8');
   } catch {
     return;
   }
-  const target = resumeMarkdownPath(root, toId);
+  const target = docMarkdownPath(root, toId);
   try {
     await fs.access(target);
     return;

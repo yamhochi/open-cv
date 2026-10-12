@@ -1,5 +1,5 @@
 {
-  "name": "resume-tools",
+  "name": "doc-tools",
   "private": true,
   "type": "module",
   "description": "Markdown to slide checks and the Word export for resume slides.",

@@ -31,7 +31,7 @@ export const zhCN: Locale = {
   },
 
   home: {
-    appTitle: 'open-cv',
+    appTitle: 'open-doc',
     draft: '草稿',
     duplicate: '复制',
     themes: '主题',
@@ -41,7 +41,7 @@ export const zhCN: Locale = {
     menu: '菜单',
     newFolder: '新建文件夹',
     folderName: '文件夹名称',
-    updateAvailable: 'open-cv {version} 已发布',
+    updateAvailable: 'open-doc {version} 已发布',
     updatePackage: '更新',
     updatingPackage: '更新中',
     updatePackageDone: '已更新。请重启 dev server 以使用新版本。',
@@ -506,8 +506,8 @@ export const zhCN: Locale = {
     nextPageAria: '下一页',
     prevPageAria: '上一页',
     openThemeAria: '打开主题 {name}',
-    usedBy: '使用此主题的 Resume 与 Cover letter',
-    usedByEmpty: '尚未有 Resume 或 Cover letter 使用此主题。',
+    usedBy: '使用此主题的 Document',
+    usedByEmpty: '尚未有 Document 使用此主题。',
     expandPromptAria: '展开 prompt',
     collapsePromptAria: '收起 prompt',
   },

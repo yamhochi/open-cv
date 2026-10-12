@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-// Exports docs/resumes/<id>.md to a .docx that follows the resume slide's design.
+// Exports docs/content/<id>.md to a .docx that follows the resume slide's design.
 //
-//   node scripts/resume/md-to-docx.mjs <slide-id> [out.docx]
+//   node scripts/doc/md-to-docx.mjs <slide-id> [out.docx]
 //
-// Default output: docs/resumes/<id>.docx. Reads the Markdown only, so run slide-to-md.mjs --check
+// Default output: docs/content/<id>.docx. Reads the Markdown only, so run slide-to-md.mjs --check
 // first if the slide may have been edited. Design tokens below mirror
 // slides/resume/index.tsx; 1 CSS px = 15 twips = 0.75pt.
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -88,7 +88,7 @@ function inline(text, o = {}) {
 
 const line = (mult) => ({ line: Math.round(240 * mult), lineRule: 'auto' });
 
-const md = readFileSync(join(repo, 'docs/resumes', `${id}.md`), 'utf8');
+const md = readFileSync(join(repo, 'docs/content', `${id}.md`), 'utf8');
 const rows = md.replace(/^---\n[\s\S]*?\n---\n/, '').split('\n');
 
 const name = rows
@@ -486,6 +486,6 @@ const doc = new Document({
   ],
 });
 
-const outPath = outArg ? resolve(outArg) : join(repo, 'docs/resumes', `${id}.docx`);
+const outPath = outArg ? resolve(outArg) : join(repo, 'docs/content', `${id}.docx`);
 writeFileSync(outPath, await Packer.toBuffer(doc));
 console.log(`wrote ${outPath}`);

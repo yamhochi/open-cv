@@ -11,7 +11,7 @@ import {
   updateMetaTitleInSource,
   validateSlideName,
 } from '../../editing/slide-ops.ts';
-import { copyResumeMarkdown } from './resume-markdown.ts';
+import { copyDocMarkdown } from './doc-markdown.ts';
 import { readManifest, writeManifest } from '../../files/folders.ts';
 import { validateMutationRequest } from '../../http/request-guard.ts';
 import { type ApiContext, json, readBody } from './context.ts';
@@ -130,7 +130,7 @@ export function registerSlideRoutes(server: ViteDevServer, ctx: ApiContext): voi
 
         const duplicated = await duplicateSlideDir(ctx.slidesRoot, slideId, body.newId);
         if (!duplicated.ok) return json(res, duplicated.status, { error: duplicated.error });
-        await copyResumeMarkdown(ctx.userCwd, slideId, duplicated.slideId);
+        await copyDocMarkdown(ctx.userCwd, slideId, duplicated.slideId);
 
         const manifest = await readManifest(ctx.manifestPath);
         const folderId = manifest.assignments[slideId];

@@ -41,11 +41,11 @@ const GENERIC = new Set(
   figma react typescript javascript css html node pnpm npm git github claude markdown
   docx pdf pptx inter google australia sydney melbourne
   jan feb mar apr jun jul aug sep sept oct nov dec
-  api apis app apps english json url urls ui ux seo ai llm sql aws gcp http https svg png yaml ats`.split(/\s+/),
+  api apis app apps english json url urls ui ux seo ai llm sql aws gcp http https svg png yaml ats vite`.split(/\s+/),
 );
 
 // Hosts that are safe in a public template, so they are never treated as private.
-const PUBLIC_HOSTS = /^(?:https?:\/\/)?(?:www\.)?(?:example\.(?:com|org|net)|yoursite\.com|localhost|github\.com\/yamhochi\/open-cv|github\.com\/open-slide|fonts\.googleapis\.com|npmjs\.com)/;
+const PUBLIC_HOSTS = /^(?:https?:\/\/)?(?:www\.)?(?:example\.(?:com|org|net)|yoursite\.com|localhost|github\.com\/yamhochi\/open-(?:cv|doc)|github\.com\/open-slide|fonts\.googleapis\.com|npmjs\.com)/;
 
 // 2026-10-10 or 10/10/2026 looks like a long number but is a date, not a phone number.
 const isDate = (v) => /^\s*(?:\d{4}[-/.]\d{1,2}[-/.]\d{1,2}|\d{1,2}[-/.]\d{1,2}[-/.]\d{4})\s*$/.test(v);

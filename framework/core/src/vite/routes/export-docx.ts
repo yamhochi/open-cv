@@ -5,10 +5,10 @@ import path from 'node:path';
 import type { ViteDevServer } from 'vite';
 import { SLIDE_ID_RE } from '../../editing/slide-ops.ts';
 import { type ApiContext, json } from './context.ts';
-import { findResumeScript, resumeMarkdownPath, resumeRootOf } from './resume-markdown.ts';
+import { findDocScript, docMarkdownPath, docRootOf } from './doc-markdown.ts';
 
-// GET /__export-docx/:id   build docs/resumes/:id.md into a .docx with the project's
-//                          scripts/resume/md-to-docx.mjs and return it as a download
+// GET /__export-docx/:id   build docs/content/:id.md into a .docx with the project's
+//                          scripts/doc/md-to-docx.mjs and return it as a download
 
 const DOCX_TYPE = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 
@@ -36,14 +36,14 @@ export function registerExportDocxRoutes(server: ViteDevServer, ctx: ApiContext)
     if (!match || !SLIDE_ID_RE.test(match[1])) return json(res, 400, { error: 'invalid slideId' });
     const slideId = match[1];
 
-    const script = await findResumeScript(ctx.userCwd);
-    if (!script) return json(res, 404, { error: 'Word exporter not found (scripts/resume/md-to-docx.mjs)' });
-    const root = resumeRootOf(script);
-    const markdown = resumeMarkdownPath(root, slideId);
+    const script = await findDocScript(ctx.userCwd);
+    if (!script) return json(res, 404, { error: 'Word exporter not found (scripts/doc/md-to-docx.mjs)' });
+    const root = docRootOf(script);
+    const markdown = docMarkdownPath(root, slideId);
     try {
       await fs.access(markdown);
     } catch {
-      return json(res, 404, { error: `no resume Markdown at docs/resumes/${slideId}.md` });
+      return json(res, 404, { error: `no Content file at docs/content/${slideId}.md` });
     }
 
     const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'open-slide-docx-'));

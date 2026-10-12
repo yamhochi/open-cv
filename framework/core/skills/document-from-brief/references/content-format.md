@@ -1,13 +1,13 @@
 # Content format
 
-The Markdown grammar for a Resume's or Cover letter's Content (`docs/resumes/<id>.md`). `scripts/resume/slide-to-md.mjs` writes it from a Layout and compares against it, and `scripts/resume/md-to-docx.mjs` reads it for the Word export, so a Content file must follow this shape exactly. Anything outside it is lost on the next pull from the Layout.
+The Markdown grammar for a document's Content (`docs/content/<id>.md`). `scripts/doc/slide-to-md.mjs` writes it from a Layout and compares against it, and `scripts/doc/md-to-docx.mjs` reads it for the Word export, so a Content file must follow this shape exactly. Anything outside it is lost on the next pull from the Layout.
 
 ## File shape
 
 ```markdown
 ---
 slide: <id>
-brief: docs/resume-briefs/<role>.md   (optional)
+brief: docs/briefs/<role>.md   (optional)
 headline: A line under the name        (optional, omit to render none)
 ---
 

@@ -2,7 +2,7 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "open-cv",
+      "name": "open-doc",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["dev"],
       "port": 5173

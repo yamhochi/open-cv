@@ -1,6 +1,6 @@
 ---
 name: Lars
-description: Quiet, editorial, text-first resume theme — white A4 page, near-black type, no accent color, hierarchy from weight and gray. Matches the resume template's spec exactly.
+description: Quiet, editorial, text-first document theme — white A4 page, near-black type, no accent color, hierarchy from weight and gray. Matches the resume template's spec exactly.
 mode: light
 ---
 

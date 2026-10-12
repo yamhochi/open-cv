@@ -1,6 +1,6 @@
 ---
 slide: resume
-brief: docs/resume-briefs/example.md
+brief: docs/briefs/example.md
 ---
 
 # Your Name

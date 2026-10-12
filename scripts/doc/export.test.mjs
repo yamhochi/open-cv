@@ -1,6 +1,6 @@
-// Completeness test for the Word export: every line of every Content file in docs/resumes must
+// Completeness test for the Word export: every line of every Content file in docs/content must
 // appear in the .docx built from it, so a section can never be dropped silently.
-// Run with: node --test scripts/resume/export.test.mjs
+// Run with: node --test scripts/doc/export.test.mjs
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { mkdtempSync, readdirSync, readFileSync } from 'node:fs';
@@ -12,7 +12,7 @@ import { inflateRawSync } from 'node:zlib';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repo = resolve(here, '../..');
-const resumesDir = join(repo, 'docs', 'resumes');
+const contentDir = join(repo, 'docs', 'content');
 
 // Read one file out of a .docx (a zip) without any dependency.
 function readZipEntry(buf, wanted) {
@@ -55,7 +55,7 @@ function plain(line) {
   );
 }
 
-for (const file of readdirSync(resumesDir).filter((f) => f.endsWith('.md'))) {
+for (const file of readdirSync(contentDir).filter((f) => f.endsWith('.md'))) {
   const id = file.replace(/\.md$/, '');
   test(`Word export of ${id} contains every line of its Content`, () => {
     const out = join(mkdtempSync(join(tmpdir(), 'resume-docx-')), `${id}.docx`);
@@ -63,7 +63,7 @@ for (const file of readdirSync(resumesDir).filter((f) => f.endsWith('.md'))) {
     assert.equal(run.status, 0, run.stderr);
     const xml = readZipEntry(readFileSync(out), 'word/document.xml').toString('utf8');
     const text = squash(unescapeXml(xml.replace(/<\/w:p>/g, '\n').replace(/<[^>]+>/g, '')));
-    const body = readFileSync(join(resumesDir, file), 'utf8').replace(/^---\n[\s\S]*?\n---\n/, '');
+    const body = readFileSync(join(contentDir, file), 'utf8').replace(/^---\n[\s\S]*?\n---\n/, '');
     const missing = body
       .split('\n')
       .map(plain)

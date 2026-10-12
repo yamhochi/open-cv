@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 // Reads a Layout (slides/<id>/index.tsx) and prints the Content (Markdown) it corresponds to, in
-// the format documented in framework/core/skills/resume-from-brief/references/content-format.md.
+// the format documented in framework/core/skills/document-from-brief/references/content-format.md.
 // Used to detect and absorb edits made directly in the editor.
 //
-//   node scripts/resume/slide-to-md.mjs <id>           print
-//   node scripts/resume/slide-to-md.mjs <id> --check   diff vs docs/resumes/<id>.md, exit 1 on Drift
-//   node scripts/resume/slide-to-md.mjs <id> --write   overwrite docs/resumes/<id>.md
+//   node scripts/doc/slide-to-md.mjs <id>           print
+//   node scripts/doc/slide-to-md.mjs <id> --check   diff vs docs/content/<id>.md, exit 1 on Drift
+//   node scripts/doc/slide-to-md.mjs <id> --write   overwrite docs/content/<id>.md
 //
-// Shortcuts: `pnpm resume:check <id>` and `pnpm resume:pull <id>`.
+// Shortcuts: `pnpm doc:check <id>` and `pnpm doc:pull <id>`.
 import { spawnSync } from 'node:child_process';
 import { existsSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
@@ -19,7 +19,7 @@ const repo = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const { parse } = createRequire(join(repo, 'framework/core/package.json'))('@babel/parser');
 
 // The id is the first plain argument and the flag can come before or after it, so both
-// `slide-to-md.mjs <id> --check` and `pnpm resume:check <id>` work.
+// `slide-to-md.mjs <id> --check` and `pnpm doc:check <id>` work.
 const cliArgs = process.argv.slice(2);
 const id = cliArgs.find((a) => !a.startsWith('--'));
 const flag = cliArgs.find((a) => a.startsWith('--'));
@@ -29,10 +29,10 @@ if (!id) {
 }
 
 const slidePath = join(repo, 'slides', id, 'index.tsx');
-const mdPath = join(repo, 'docs/resumes', `${id}.md`);
+const mdPath = join(repo, 'docs/content', `${id}.md`);
 if (!existsSync(slidePath)) {
   console.log(
-    `no layout: slides/${id}/index.tsx does not exist. Create it by copying a Template folder (slides/resume or slides/cover-letter) to slides/${id}/, then sync the Content into it (see the sync-resume skill).`,
+    `no layout: slides/${id}/index.tsx does not exist. Create it by copying a Template folder (slides/resume or slides/cover-letter) to slides/${id}/, then sync the Content into it (see the sync-document skill).`,
   );
   process.exit(3);
 }
@@ -235,7 +235,7 @@ if (flag === '--write') {
 } else if (flag === '--check') {
   if (!existsSync(mdPath)) {
     console.log(
-      `missing: docs/resumes/${id}.md does not exist. Every resume slide needs one, create it with --write.`,
+      `missing: docs/content/${id}.md does not exist. Every resume slide needs one, create it with --write.`,
     );
     process.exit(1);
   }
@@ -243,7 +243,7 @@ if (flag === '--write') {
   writeFileSync(tmp, result);
   const d = spawnSync(
     'diff',
-    ['-u', '--label', `docs/resumes/${id}.md`, '--label', `slide ${id}`, mdPath, tmp],
+    ['-u', '--label', `docs/content/${id}.md`, '--label', `slide ${id}`, mdPath, tmp],
     {
       encoding: 'utf8',
     },
