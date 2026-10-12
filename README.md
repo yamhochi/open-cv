@@ -1,8 +1,8 @@
 # open-doc
 
-open-doc is a document builder for job applications: write a resume and a cover letter as code. Each document is a React component rendered onto a fixed **A4 page (794 × 1123 px)**, so layout, spacing and print output are exact instead of fighting a Word template. You paste in a document you already have and a coding agent turns it into a Markdown file and a laid-out page, then keeps the two in step as you edit in the visual editor or in chat. It exports to PDF, Word and HTML.
+open-doc is a document builder. Each document is a React component rendered onto a fixed **A4 page (794 × 1123 px)**, so layout, spacing and print output are exact instead of fighting a Word template. You paste in a document you already have and a coding agent turns it into a Markdown file and a laid-out page, then keeps the two in step as you edit in the visual editor or in chat. It exports to PDF, Word and HTML.
 
-![open-doc editor showing a two-page A4 resume template](docs/screenshot.png)
+![open-doc editor showing a two-page A4 document](docs/screenshot.png)
 
 Built on [open-slide](https://github.com/open-slide/open-slide) by [Yiwei Ho](https://github.com/1weiho).
 
@@ -12,8 +12,8 @@ open-doc started as a fork of open-slide, which is built for presentations. The 
 
 - **Documents, not slides.** Pages are A4 portrait (794 × 1123 px) instead of 16:9, and a document is a few Pages in a row. Present mode shows a Page at full size and scrolls, like reading a document.
 - **Layout and content kept in sync.** Each document has its words as Markdown (the Content) and its look as a page file (the Layout). Skills import a document you already have, sync the two, and tell you when they have drifted apart.
-- **Exports for job applications.** The PDF and Word files are ATS ready. The Word export is new and is built from the Content. PowerPoint export and speaker notes are removed, because a document like a resume doesn't need them.
-- **Agent skills written for a4 documents.** The instructions your coding agent follows describe a document page (type sizes, spacing, how bullets are built) and content (import, sync, apply layout comments), instead of building a deck. The model itself is unchanged. The skills guide it.
+- **Exports.** The PDF and Word files contain real, selectable text. The Word export is new and is built from the Content. PowerPoint export and speaker notes are removed, because a document doesn't need them.
+- **Agent skills written for A4 documents.** The instructions your coding agent follows describe a document page (type sizes, spacing, how bullets are built) and content (import, sync, apply layout comments), instead of building a deck. The model itself is unchanged. The skills guide it.
 
 The full list, and how to take updates from open-slide, is in [docs/FORK.md](docs/FORK.md).
 
@@ -29,7 +29,7 @@ pnpm sync:skills
 pnpm dev
 ```
 
-Open the address `pnpm dev` prints (usually <http://localhost:5173>). You will see the two Templates, a placeholder resume and a placeholder cover letter. The steps below turn them into your own documents.
+Open the address `pnpm dev` prints (usually <http://localhost:5173>). You will see the two Templates that ship with the project, a placeholder resume and a placeholder cover letter. The steps below turn them into your own documents.
 
 ## How to use it
 
@@ -37,15 +37,15 @@ Open the project in Claude Code (or another coding agent that reads `.claude/ski
 
 ### 1. Start from a document you already have
 
-Say **"import my resume"** (or **"import my cover letter"**) and paste it, or give a path to a PDF or text file.
+Say **"import my document"** and paste it, or give a path to a PDF or text file.
 
-- The `import-document` skill writes your words into `docs/content/resume.md`, keeping your wording and only putting it into the fixed Markdown shape. It tells you anything it could not place cleanly.
+- The `import-document` skill writes your words into `docs/content/<id>.md`, keeping your wording and only putting it into the fixed Markdown shape. It tells you anything it could not place cleanly.
 - It then hands over to `sync-document`, which builds the Layout from that Content, fits it onto A4 Pages and checks it.
 - Open the editor to see it. Read the Markdown first if you want to correct anything before the layout is built.
 
 ### 2. Keep chatting to change it
 
-Ask for changes in plain language: "shorten the summary", "put the second role on page two", "make the section headings smaller". Wording changes go to the Content and are synced into the Layout. Visual changes go straight to the Layout.
+Ask for changes in plain language: "shorten the opening paragraph", "put the second section on page two", "make the section headings smaller". Wording changes go to the Content and are synced into the Layout. Visual changes go straight to the Layout.
 
 You can also edit in the editor yourself by double-clicking text. The Markdown is then out of date, which the project calls **Drift**. Say **"sync"** and `sync-document` finds which side changed and brings the other into line. It asks you before overwriting anything if both changed.
 
@@ -60,12 +60,12 @@ Comments are there to help with the layout. They are not for writing your docume
 ### 4. Check and export
 
 - **Download** in the editor toolbar exports a PDF. The menu also has Word and HTML. PDF export needs a Chromium-based browser.
-- **ATS ready.** The PDF and Word files are built to be read by applicant tracking systems: real selectable text in a clean reading order, fonts embedded, and bullets drawn as shapes so they add no stray characters.
+- **Real text.** The PDF and Word files contain selectable text in a clean reading order, with fonts embedded and bullets drawn as shapes so they add no stray characters.
 - The PDF comes from the Layout, and the Word file comes from the Content, so run a sync first if you have edited in the editor. `pnpm doc:check <id>` tells you whether they match.
 
 | You say | Skill | What it does |
 | --- | --- | --- |
-| "import my resume" | `import-document` | A pasted or file document in, Content out, then a sync. |
+| "import my document" | `import-document` | A pasted or file document in, Content out, then a sync. |
 | "sync" or "I edited it in the editor" | `sync-document` | Finds the side that changed and updates the other. |
 | "apply comments" | `apply-comments` | Makes the layout changes you left as comments in the editor. |
 
@@ -100,10 +100,10 @@ export const meta: SlideMeta = { title: 'My document' };
 export default [DocumentPage] satisfies Page[];
 ```
 
-- **The page is fixed at 794 × 1123.** Content past the bottom edge is cropped, so when a section overflows, move whole entries to the next page.
+- **The page is fixed at 794 × 1123.** Content past the bottom edge is cropped, so when a section overflows, move whole sections to the next page.
 - **Use pixel values** for type and spacing (the template uses 12px body text and 48px padding).
 - **Build bullets as components.** Write each bullet as `<Bullet label="…">` with nested `<SubBullet text="…" />` children. Don't use one paragraph or a `.map()`. This keeps every line separately editable in the visual editor.
-- **Assets** (a headshot, for example) go in the document's own `slides/<id>/assets/` folder.
+- **Assets** (images, for example) go in the document's own `slides/<id>/assets/` folder.
 
 [`AGENTS.md`](./AGENTS.md) has the full rules for coding agents.
 

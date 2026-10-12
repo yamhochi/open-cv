@@ -1,6 +1,6 @@
 ---
 name: import-document
-description: Turn a document the user already has (a resume or cover letter) into Content, the Markdown file in docs/content, so it can be synced into a Layout. Use when the user pastes a resume, shares a PDF or text file of one, says "import my resume", "start from my existing resume", "set up my resume" or "use this resume", or asks to begin from something they already wrote. Writes Content only, then hands off to the sync-document skill.
+description: Turn a document the user already has (a resume or cover letter) into Content, the Markdown file in docs/content, so it can be synced into a Layout. Use when the user pastes a resume, shares a PDF or text file of one, says "import my document", "import my resume", "start from my existing resume", "set up my resume" or "use this resume", or asks to begin from something they already wrote. Writes Content only, then hands off to the sync-document skill.
 ---
 
 # Import a document
