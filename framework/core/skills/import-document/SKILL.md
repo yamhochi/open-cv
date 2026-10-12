@@ -1,26 +1,28 @@
 ---
 name: import-document
-description: Turn a document the user already has (a resume or cover letter) into Content, the Markdown file in docs/content, so it can be synced into a Layout. Use when the user pastes a resume, shares a PDF or text file of one, says "import my document", "import my resume", "start from my existing resume", "set up my resume" or "use this resume", or asks to begin from something they already wrote. Writes Content only, then hands off to the sync-document skill.
+description: Turn a document the user already has (a resume or letter) into Content, the Markdown file in docs/content, so it can be synced into a Layout. Use when the user pastes a resume, shares a PDF or text file of one, says "import my document", "import my resume", "start from my existing resume", "set up my resume" or "use this resume", or asks to begin from something they already wrote. Writes Content only, then hands off to the sync-document skill.
 ---
 
 # Import a document
 
 Turns what the user already has into **Content** (`docs/content/<id>.md`). Content comes first so the user can read and correct plain Markdown before any Layout exists. This skill never writes the Layout. Hand off to `sync-document` for that.
 
-Use the project's words from `CONTEXT.md`: Document, Resume, Cover letter, Content, Layout, Page.
+Use the project's words from `CONTEXT.md`: Document, Resume, Letter, Content, Layout, Page.
 
 ## 1. Get the source
 
 - Pasted text: use it as given.
 - A PDF or a text or Markdown file: read it with the Read tool. If the text comes out scrambled (columns interleaved, missing spaces), say so and ask the user to paste it.
 - A Word file: ask the user to export it to PDF or paste the text. This skill does not read `.docx`.
-- A Cover letter is imported the same way, and the grammar differs (see the format reference).
+- A Letter is imported the same way, and the grammar differs (see the format reference).
 
 Never invent content. The only facts are the ones in the source.
 
+Only a Resume and a Letter have a Content format. A Report has none yet and is edited in its Layout, so do not use this skill for one.
+
 ## 2. Choose where it goes
 
-- Default id: `resume` for a Resume, `cover-letter` for a Cover letter. Those folders ship as untouched **Templates** with placeholder text.
+- Default id: `resume` for a Resume, `letter` for a Letter. Those folders ship as untouched **Templates** with placeholder text.
 - If `docs/content/<id>.md` is still the Template's placeholder, replacing it is the expected first import. Say that you are replacing the placeholder.
 - If it holds real content, do not overwrite it. Check `git status` and `git diff docs/content/<id>.md`, then ask whether to use a new id (a copy for another role) or replace.
 

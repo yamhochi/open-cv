@@ -32,7 +32,7 @@ const slidePath = join(repo, 'slides', id, 'index.tsx');
 const mdPath = join(repo, 'docs/content', `${id}.md`);
 if (!existsSync(slidePath)) {
   console.log(
-    `no layout: slides/${id}/index.tsx does not exist. Create it by copying a Template folder (slides/resume or slides/cover-letter) to slides/${id}/, then sync the Content into it (see the sync-document skill).`,
+    `no layout: slides/${id}/index.tsx does not exist. Create it by copying a Template folder (slides/resume or slides/letter) to slides/${id}/, then sync the Content into it (see the sync-document skill).`,
   );
   process.exit(3);
 }
@@ -109,7 +109,9 @@ function visit(el) {
     case 'LetterList':
       for (const b of childEls(el)) {
         const title = attr(b, 'title').replace(/\.$/, '');
-        out.push(`- **${title}.** ${attr(b, 'body')} [${attr(b, 'address')}](${attr(b, 'href')})`);
+        const address = attr(b, 'address');
+        const href = attr(b, 'href');
+        out.push(`- **${title}.** ${attr(b, 'body')}${address && href ? ` [${address}](${href})` : ''}`);
       }
       out.push('');
       return;
@@ -178,6 +180,15 @@ function pageBodies() {
 
 for (const page of pageBodies()) visit(page);
 
+// A Layout built from other components (a Report, for example) has nothing this script can read,
+// so say so instead of writing an empty Content file.
+if (!out.some((l) => l.trim())) {
+  console.log(
+    `unsupported: slides/${id}/index.tsx has no Content format. Only resumes and letters can be synced to Markdown; edit this document in its Layout.`,
+  );
+  process.exit(4);
+}
+
 function contactLine() {
   for (const n of ast.program.body) {
     if (n.type !== 'VariableDeclaration') continue;
@@ -235,7 +246,7 @@ if (flag === '--write') {
 } else if (flag === '--check') {
   if (!existsSync(mdPath)) {
     console.log(
-      `missing: docs/content/${id}.md does not exist. Every resume slide needs one, create it with --write.`,
+      `missing: docs/content/${id}.md does not exist. Every resume or letter needs one, create it with --write.`,
     );
     process.exit(1);
   }

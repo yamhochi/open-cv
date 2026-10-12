@@ -6,7 +6,7 @@ const FONT_HREFS = [
   'https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap',
   'https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400&display=swap',
 ];
-const FONT_LINK_ID = 'osd-webfont-cover-letter-template';
+const FONT_LINK_ID = 'osd-webfont-letter-template';
 if (typeof document !== 'undefined') {
   FONT_HREFS.forEach((href, i) => {
     const id = `${FONT_LINK_ID}-${i}`;
@@ -68,25 +68,23 @@ const content: React.CSSProperties = {
 };
 
 // Single source of truth for contact details, so every placement (header, footer,
-// cover letter) stays in sync instead of drifting into different phone formats/orders.
+// letter) stays in sync instead of drifting into different phone formats/orders.
 const CONTACT = {
   email: 'you@example.com',
   phone: '+1 555 010 1234',
   website: 'yoursite.com',
-  linkedin: 'in/yourname',
 } as const;
 
 // Only fields that should render as clickable links carry an href — email/phone stay
 // plain text on the page (no mailto:/tel: requested), website/linkedin open the profile.
 const CONTACT_LINKS: Partial<Record<keyof typeof CONTACT, string>> = {
   website: 'https://yoursite.com',
-  linkedin: 'https://www.linkedin.com/in/yourname',
 };
 
 // fontSize defaults to 12 (the document rule); the header's contact line is a deliberate
 // exception at 11px so the full line fits without wrapping — not a general precedent.
 const ContactMeta = ({
-  fields = ['email', 'phone', 'website', 'linkedin'],
+  fields = ['email', 'phone', 'website'],
   align,
   fontSize = 12,
 }: {
@@ -169,7 +167,7 @@ const LetterList = ({ children }: { children: ReactNode }) => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>{children}</div>
 );
 
-// A list item with a bold lead, a sentence, and a link shown as its visible address.
+// A list item with a bold lead and a sentence. A link, shown as its visible address, is optional.
 const LetterBullet = ({
   title,
   body,
@@ -178,8 +176,8 @@ const LetterBullet = ({
 }: {
   title: string;
   body: string;
-  href: string;
-  address: string;
+  href?: string;
+  address?: string;
 }) => (
   <div style={{ fontSize: 12, lineHeight: 1.6, color: muted, display: 'flex', gap: 6 }}>
     <span
@@ -197,50 +195,48 @@ const LetterBullet = ({
       <div style={{ display: 'inline-block', fontWeight: 500, color: 'var(--osd-text)' }}>
         {title}
       </div>{' '}
-      <div style={{ display: 'inline-block' }}>{body}</div>{' '}
-      <a
-        href={href}
-        target="_blank"
-        rel="noreferrer"
-        style={{
-          color: '#1D4ED8',
-          textDecoration: 'underline',
-          textDecorationColor: '#A5B8F0',
-          textUnderlineOffset: 2,
-        }}
-      >
-        {address}
-      </a>
+      <div style={{ display: 'inline-block' }}>{body}</div>
+      {href && address ? (
+        <>
+          {' '}
+          <a
+            href={href}
+            target="_blank"
+            rel="noreferrer"
+            style={{
+              color: '#1D4ED8',
+              textDecoration: 'underline',
+              textDecorationColor: '#A5B8F0',
+              textUnderlineOffset: 2,
+            }}
+          >
+            {address}
+          </a>
+        </>
+      ) : null}
     </div>
   </div>
 );
 
-const CoverLetter: Page = () => (
+const Letter: Page = () => (
   <div style={page}>
     <div style={content}>
       <Header />
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <LetterParagraph text="Dear Hiring Manager," />
-        <LetterParagraph text="Open with the role you are applying for and the one thing that makes you a fit, in a sentence or two. Name the company and the role so it is clear this letter was written for them." />
-        <LetterParagraph text="Give one concrete result and how you achieved it. Keep to what you can stand behind, and tie it to something the role asks for." />
-        <LetterParagraph text="Say why this role and this kind of work, in your own words. A short, honest reason reads better than a list of qualities." />
-        <LetterParagraph text="If you keep side projects or writing that bear on the role, introduce them in a line and list them:" />
+        <LetterParagraph text="1 January 2027" />
+        <LetterParagraph text="Recipient Name, Position, Organisation, Street Address, City Postcode" />
+        <LetterParagraph text="Our reference: ABC-001" />
+        <LetterParagraph text="Dear Recipient Name," />
+        <LetterParagraph text="Re: The subject of the letter, in one line" />
+        <LetterParagraph text="State the purpose of the letter in the first sentence, so the reader knows why you are writing and what you need from them." />
+        <LetterParagraph text="Give the details that support it: dates, amounts, names and reference numbers. Keep to one subject, and keep each paragraph to one idea." />
+        <LetterParagraph text="If you refer to other documents, list them:" />
         <LetterList>
-          <LetterBullet
-            title="A project name."
-            body="One sentence on the problem it solves and what you learned."
-            href="https://example.com/project"
-            address="example.com/project"
-          />
-          <LetterBullet
-            title="Another project."
-            body="One sentence on what it does and why you built it."
-            href="https://example.com/another"
-            address="example.com/another"
-          />
+          <LetterBullet title="Attachment A." body="A short description of the first attachment." />
+          <LetterBullet title="Attachment B." body="A short description of the second attachment." />
         </LetterList>
-        <LetterParagraph text="Close by pointing to the attached resume and saying you would welcome a conversation." />
-        <LetterParagraph text="Kind regards," />
+        <LetterParagraph text="Say what you would like to happen next and by when, and how the reader can reach you." />
+        <LetterParagraph text="Yours sincerely," />
         <LetterParagraph text="Your Name" />
       </div>
     </div>
@@ -248,9 +244,9 @@ const CoverLetter: Page = () => (
 );
 
 export const meta: SlideMeta = {
-  title: 'Cover letter template',
+  title: 'Letter template',
   theme: 'lars',
   createdAt: '2026-10-10T00:00:00.000Z',
 };
 
-export default [CoverLetter] satisfies Page[];
+export default [Letter] satisfies Page[];

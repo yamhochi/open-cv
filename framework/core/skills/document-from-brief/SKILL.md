@@ -1,6 +1,6 @@
 ---
 name: document-from-brief
-description: Tailor a document (a resume or cover letter) to a role through a fixed flow - read the role brief in docs/briefs, write the document's Content as Markdown in docs/content, then sync that Markdown into the Layout in slides/ and verify it fits. Also syncs the other way, pulling edits made directly on the Layout back into the Markdown. Use when the user asks to tailor, rewrite or update the resume for a role, to update the resume from the md, to sync the resume Layout, to sync the Layout back to the md, to check whether the resume and Layout match, or to start a resume for a new role.
+description: Tailor a document (a resume or letter) to a role through a fixed flow - read the role brief in docs/briefs, write the document's Content as Markdown in docs/content, then sync that Markdown into the Layout in slides/ and verify it fits. Also syncs the other way, pulling edits made directly on the Layout back into the Markdown. Use when the user asks to tailor, rewrite or update the resume for a role, to update the resume from the md, to sync the resume Layout, to sync the Layout back to the md, to check whether the resume and Layout match, or to start a resume for a new role.
 ---
 
 # Document from brief
@@ -13,7 +13,7 @@ One role, three artefacts. The default order is Brief, then Content (the Markdow
 | 2. Content | `docs/content/<id>.md` | The words, as Markdown. The default source for the Layout's text. Reviewed and edited by the user. |
 | 3. Layout | `slides/<id>/index.tsx` | How the words are arranged into Pages and styled. Text is copied from Content, never invented here. |
 
-**Every Resume and Cover letter has a Content file in `docs/content/<id>.md`.** The Word export needs it (the editor's Export as DOCX item or `pnpm export:docx`), and `slide-to-md.mjs --check` fails when it is missing. Duplicating a template in the editor copies its Markdown too, with `slide:` updated. For a Layout made any other way, create the Markdown straight away with `node scripts/doc/slide-to-md.mjs <id> --write`.
+**Every Resume and Letter has a Content file in `docs/content/<id>.md`.** The Word export needs it (the editor's Export as DOCX item or `pnpm export:docx`), and `slide-to-md.mjs --check` fails when it is missing. Duplicating a template in the editor copies its Markdown too, with `slide:` updated. For a Layout made any other way, create the Markdown straight away with `node scripts/doc/slide-to-md.mjs <id> --write`.
 
 Stage 2 carries front matter (`slide:` and `brief:`) so the three files stay linked. For a new role, copy the closest existing Layout's folder under `slides/` and its Markdown, give it a new kebab-case id, a new `meta.title`, a fresh `createdAt` (`node -e "console.log(new Date().toISOString())"`) and a unique `FONT_LINK_ID`, then follow the flow.
 

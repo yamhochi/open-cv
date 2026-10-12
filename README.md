@@ -29,7 +29,7 @@ pnpm sync:skills
 pnpm dev
 ```
 
-Open the address `pnpm dev` prints (usually <http://localhost:5173>). You will see the two Templates that ship with the project, a placeholder resume and a placeholder cover letter. The steps below turn them into your own documents.
+Open the address `pnpm dev` prints (usually <http://localhost:5173>). You will see the three Templates that ship with the project: a placeholder resume, a placeholder letter and a placeholder report. The steps below turn them into your own documents.
 
 ## How to use it
 

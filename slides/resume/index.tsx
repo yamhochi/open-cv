@@ -93,7 +93,7 @@ const SectionTitle = ({ children }: { children: ReactNode }) => (
 );
 
 // Single source of truth for contact details, so every placement (header, footer,
-// cover letter) stays in sync instead of drifting into different phone formats/orders.
+// letter) stays in sync instead of drifting into different phone formats/orders.
 const CONTACT = {
   email: 'you@example.com',
   phone: '+1 555 010 1234',

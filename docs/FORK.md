@@ -1,6 +1,6 @@
 # How open-doc differs from open-slide
 
-open-doc runs on a local fork of [open-slide](https://github.com/open-slide/open-slide) (`@open-slide/core` 2.0.1, MIT, © Yiwei Ho). open-slide is a framework for writing presentations as React components. This fork adapts it to documents on A4 paper, starting with a resume and a cover letter. The forked framework lives in [`framework/core/`](../framework/core).
+open-doc runs on a local fork of [open-slide](https://github.com/open-slide/open-slide) (`@open-slide/core` 2.0.1, MIT, © Yiwei Ho). open-slide is a framework for writing presentations as React components. This fork adapts it to documents on A4 paper, starting with a resume and a letter. The forked framework lives in [`framework/core/`](../framework/core).
 
 ## What changed
 

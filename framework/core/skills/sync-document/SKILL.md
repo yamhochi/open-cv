@@ -1,6 +1,6 @@
 ---
 name: sync-document
-description: Keep a document's Content (the Markdown in docs/content) and its Layout (the page file in slides) saying the same thing. Detects which side changed and syncs in the right direction. Use when the user says "sync", "sync to layout", "sync to the md", "update the layout from the markdown", "pull my edits into the markdown", "check whether they match", "I edited the resume in the editor" (or the cover letter), or after import-document has written new Content. Also run it at the start of a document session.
+description: Keep a document's Content (the Markdown in docs/content) and its Layout (the page file in slides) saying the same thing. Detects which side changed and syncs in the right direction. Use when the user says "sync", "sync to layout", "sync to the md", "update the layout from the markdown", "pull my edits into the markdown", "check whether they match", "I edited the resume in the editor" (or the letter), or after import-document has written new Content. Also run it at the start of a document session.
 ---
 
 # Sync a document
@@ -11,13 +11,15 @@ The procedure and the rules for each direction are in the `document-from-brief` 
 
 ## 1. Check
 
+Only a Resume and a Letter have a Content format. For a Report the script says `unsupported` (exit 4): leave it, because a Report is edited in its Layout and there is nothing to sync.
+
 ```bash
 node scripts/doc/slide-to-md.mjs <id> --check
 ```
 
 - **In sync** (exit 0): nothing to do. Say so.
 - **Missing Content** (the script says `missing`): the Layout exists with no Content. Create it with `--write`.
-- **No Layout** (the script says `no layout` and exits 3, `slides/<id>/` is missing): create it by copying the Template folder (`slides/resume` or `slides/cover-letter`) to `slides/<id>/`, give it a new `meta.title`, a fresh `createdAt` and a unique `FONT_LINK_ID`, then run Content to Layout.
+- **No Layout** (the script says `no layout` and exits 3, `slides/<id>/` is missing): create it by copying the Template folder (`slides/resume` or `slides/letter`) to `slides/<id>/`, give it a new `meta.title`, a fresh `createdAt` and a unique `FONT_LINK_ID`, then run Content to Layout.
 - **Drift** (exit 1): continue.
 
 ## 2. Decide the direction

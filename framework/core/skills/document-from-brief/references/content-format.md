@@ -55,11 +55,15 @@ Rules:
 - A `## ... (continued)` heading is a continuation on the next Page. It is not written to Content.
 - Do not use more than two bullet levels or any other Markdown (tables, images, code). The Layout has no component for them.
 
-## Cover letter
+## Letter
 
 | Markdown | Layout component |
 | --- | --- |
 | each paragraph, including the salutation and the sign-off | `LetterParagraph` |
 | `- **Title.** sentence [address](https://url)` | `LetterBullet title body href address`, inside a `LetterList` |
 
-A cover letter has no `##` sections.
+A letter has no `##` sections.
+
+## Report
+
+A Report has no Content format yet. `slide-to-md.mjs` reports `unsupported` for it, and the Word export needs a Content file, so a Report is edited in its Layout and exported as PDF or HTML.

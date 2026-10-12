@@ -1,23 +1,27 @@
 # open-doc
 
-A tool for writing documents, such as a resume and a cover letter, as code on A4 pages and exporting them. This glossary covers the language of using it. Words for maintaining the framework underneath it are not defined here.
+A tool for writing documents, such as a resume and a letter, as code on A4 pages and exporting them. This glossary covers the language of using it. Words for maintaining the framework underneath it are not defined here.
 
 ## Language
 
 **Document**:
-A text document of one or more A4 Pages that you write and export. Today it comes in two kinds, a Resume and a Cover letter.
+A text document of one or more A4 Pages that you write and export. Today it comes in three kinds, a Resume, a Letter and a Report.
 _Avoid_: File, slide, deck
 
 **Resume**:
 A one to two page Document presenting a person's experience.
 _Avoid_: CV
 
-**Cover letter**:
-A one page Document that accompanies a Resume for one application.
-_Avoid_: Letter
+**Letter**:
+A one page Document in official letter form: the sender, a date, the recipient, a subject, the message and a sign-off.
+_Avoid_: Cover letter, mail
+
+**Report**:
+A multi-page Document that presents findings to a reader: a cover, an executive summary, and sections with tables and quotations. It has no Content file yet and is edited in its Layout.
+_Avoid_: Paper, whitepaper
 
 **Template**:
-The untouched placeholder Document of a kind (a Resume or a Cover letter) that ships with the project, copied to begin a real one. A Document you wrote is still a Document, even when you copy it to start the next.
+The untouched placeholder Document of a kind (a Resume, a Letter or a Report) that ships with the project, copied to begin a real one. A Document you wrote is still a Document, even when you copy it to start the next.
 _Avoid_: Starter, sample, slide
 
 **Page**:
