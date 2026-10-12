@@ -11,7 +11,7 @@ Built on [open-slide](https://github.com/open-slide/open-slide) by [Yiwei Ho](ht
 open-doc started as a fork of open-slide, which is built for presentations. The editor looks familiar on purpose. What changed is what's underneath:
 
 - **Documents, not slides.** Pages are A4 portrait (794 × 1123 px) instead of 16:9, and a document is a few Pages in a row. Present mode shows a Page at full size and scrolls, like reading a document.
-- **Layout and content content kept in sync.** Each document has its words as Markdown (the Content) and its look as a page file (the Layout). Skills import a document you already have, sync the two, and tell you when they have drifted apart.
+- **Layout and content kept in sync.** Each document has its words as Markdown (the Content) and its look as a page file (the Layout). Skills import a document you already have, sync the two, and tell you when they have drifted apart.
 - **Exports for job applications.** The PDF and Word files are ATS ready. The Word export is new and is built from the Content. PowerPoint export and speaker notes are removed, because a document like a resume doesn't need them.
 - **Agent skills written for a4 documents.** The instructions your coding agent follows describe a document page (type sizes, spacing, how bullets are built) and content (import, sync, apply layout comments), instead of building a deck. The model itself is unchanged. The skills guide it.
 
@@ -22,8 +22,8 @@ The full list, and how to take updates from open-slide, is in [docs/FORK.md](doc
 You need [Node.js](https://nodejs.org) 20.19+ (or 22.12+) and [pnpm](https://pnpm.io).
 
 ```bash
-git clone https://github.com/yamhochi/open-cv.git
-cd open-cv
+git clone https://github.com/yamhochi/open-doc.git
+cd open-doc
 pnpm install
 pnpm sync:skills
 pnpm dev
