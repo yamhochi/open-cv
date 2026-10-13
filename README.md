@@ -2,7 +2,7 @@
 
 open-doc is a document builder. Each document is a React component rendered onto a fixed **A4 page (794 × 1123 px)**, so layout, spacing and print output are exact instead of fighting a Word template. You paste in a document you already have and a coding agent turns it into a Markdown file and a laid-out page, then keeps the two in step as you edit in the visual editor or in chat. It exports to PDF, Word and HTML.
 
-![open-doc editor showing a two-page A4 document](docs/screenshot.png)
+![open-doc editor showing the report, letter and resume Templates](docs/screenshot.png)
 
 Built on [open-slide](https://github.com/open-slide/open-slide) by [Yiwei Ho](https://github.com/1weiho).
 
